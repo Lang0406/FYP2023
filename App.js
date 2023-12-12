@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { firebase, db } from './firebase'; 
 import UserInfo from './UserInfo';
 import Register from './Register';
+import Map from './map';
 
 const Stack = createStackNavigator();
 
@@ -15,25 +15,20 @@ export default function App() {
 
   const handleLogin = async (navigation) => { 
     try {
-     
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
 
-      // Retrieve user data from database
       const querySnapshot = await db.collection('users').where('email', '==', email).get();
 
       if (!querySnapshot.empty) {
-        //one email per account
         const userData = querySnapshot.docs[0].data();
         console.log('User data from Firestore:', userData);
 
-        
         navigation.navigate('UserInfo', { user: userData });
       } else {
         console.log('User data not found in Firestore');
       }
 
-      
       Alert.alert('Login Successful', 'Welcome back!');
     } catch (error) {
       console.error('Error logging in:', error.message);
@@ -41,22 +36,22 @@ export default function App() {
     }
   };
 
-    
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword} handleLogin={() => handleLogin(props.navigation)} />}
+          {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword} 
+          handleLogin={() => handleLogin(props.navigation)}
+           />}
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} /> 
         <Stack.Screen name="UserInfo" component={UserInfo} />
-
+        <Stack.Screen name="Map" component={Map} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-//front end
 const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handleLogin }) => {
   const handleRegisterNavigation = () => {
     navigation.navigate('Register');
@@ -78,13 +73,21 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-      <Button title="Login" onPress={() => handleLogin(navigation)} />
-      <Button title="Register" onPress={handleRegisterNavigation} />
+      <View style={styles.buttonContainer}>
+        
+        
+        <TouchableOpacity style={styles.button} onPress={handleRegisterNavigation}>
+          <Text>Register</Text>
+        </TouchableOpacity>
+        <View style={styles.buttonGap} />
+        <TouchableOpacity style={styles.button} onPress={() => handleLogin(navigation)}>
+          <Text>Login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-//css
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -104,5 +107,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+  },
+  button: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+  },
+  buttonGap: {
+    width: 15,
   },
 });

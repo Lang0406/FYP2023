@@ -11,17 +11,28 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyAF8EntZ5zEUN2iZCKWgTpVniq6nRk-Ws4"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location for some feature",
+        "NSLocationAlwaysUsageDescription": "We need your location for some feature"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAF8EntZ5zEUN2iZCKWgTpVniq6nRk-Ws4"
+        }
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
