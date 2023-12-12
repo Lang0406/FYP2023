@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { firebase, db } from './firebase'; 
 import UserInfo from './UserInfo';
+import Register from './Register';
 
 const Stack = createStackNavigator();
 
@@ -47,7 +48,9 @@ export default function App() {
         <Stack.Screen name="Login">
           {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword} handleLogin={() => handleLogin(props.navigation)} />}
         </Stack.Screen>
+        <Stack.Screen name="Register" component={Register} /> 
         <Stack.Screen name="UserInfo" component={UserInfo} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -55,6 +58,10 @@ export default function App() {
 
 //front end
 const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handleLogin }) => {
+  const handleRegisterNavigation = () => {
+    navigation.navigate('Register');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>TripAid</Text>
@@ -72,6 +79,7 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
         value={password}
       />
       <Button title="Login" onPress={() => handleLogin(navigation)} />
+      <Button title="Register" onPress={handleRegisterNavigation} />
     </View>
   );
 };
