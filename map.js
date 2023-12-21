@@ -16,18 +16,19 @@ const Map = () => {
       try {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          console.error('Permission to access location was denied');
+          console.error('Permission to access location denied');
           return;
         }
 
-        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
+        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.BestForNavigation });
+
         console.log('Location:', location);
 
         const { latitude, longitude } = location.coords;
         setRegion({
           latitude,
           longitude,
-          latitudeDelta: 0.02, // You can adjust these values to set the initial zoom level
+          latitudeDelta: 0.02, 
           longitudeDelta: 0.02,
         });
       } catch (error) {

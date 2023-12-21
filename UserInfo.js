@@ -6,16 +6,20 @@ const UserInfoScreen = ({ navigation, route }) => {
   const { email, age, location } = route.params.user;
 
   const navigateToMap = () => {
-    // Replace 'Map' with the correct screen name if it's different
     navigation.navigate('Map');
   };
+
+  const navigateToPost = () => {
+    navigation.navigate('Post')
+  }
 
   return (
     <View>
       <Text>Email: {email}</Text>
       <Text>Age: {age}</Text>
       <Text>Location: {location}</Text>
-      <Button title="Go to Map" onPress={navigateToMap} />
+      <Button title="Map" onPress={navigateToMap} />
+      <Button title="Forum" onPress={navigateToPost} />
     </View>
   );
 };

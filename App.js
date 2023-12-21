@@ -5,7 +5,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { firebase, db } from './firebase'; 
 import UserInfo from './UserInfo';
 import Register from './Register';
-import Map from './map';
+import Map from './Map';
+import Post from "./Post";
+import Comment from './Comment';
+
 
 const Stack = createStackNavigator();
 
@@ -29,7 +32,7 @@ export default function App() {
         console.log('User data not found in Firestore');
       }
 
-      Alert.alert('Login Successful', 'Welcome back!');
+      Alert.alert('Login Successful!');
     } catch (error) {
       console.error('Error logging in:', error.message);
       Alert.alert('Login Error', error.message);
@@ -47,6 +50,10 @@ export default function App() {
         <Stack.Screen name="Register" component={Register} /> 
         <Stack.Screen name="UserInfo" component={UserInfo} />
         <Stack.Screen name="Map" component={Map} />
+        <Stack.Screen name="Post" component={Post} />
+        <Stack.Screen name="Comment" component={Comment} />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

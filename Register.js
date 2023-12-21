@@ -1,4 +1,3 @@
-// Register.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { firebase, db } from './firebase';
@@ -12,32 +11,32 @@ const Register = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      // Register user with email and password
+    
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
   
       if (!user) {
-        // If user is not defined, display an error
-        Alert.alert('Registration Error', 'User registration failed.');
+    
+        Alert.alert('Registration Error !');
         return;
       }
   
-      // Add user data to Firestore
+
       await db.collection('users').doc(user.uid).set({
         email,
-        age: parseInt(age, 10), // Convert age to number
+        age: parseInt(age, 10), 
         gender,
         location,
       });
   
-      // Display a pop-up or alert
+      
       Alert.alert('Registration Successful', 'Welcome to the app!');
   
-      // Navigate to the UserInfo screen
+    
       navigation.goBack();
     } catch (error) {
       console.error('Error registering user:', error.message);
-      // Display an error pop-up or alert
+    
       Alert.alert('Registration Error', error.message);
     }
   };
@@ -63,7 +62,7 @@ const Register = ({ navigation }) => {
         placeholder="Age"
         onChangeText={(text) => setAge(text)}
         value={age}
-        keyboardType="numeric" // Show numeric keyboard
+        keyboardType="numeric" 
       />
       <TextInput
         style={styles.input}
