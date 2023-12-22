@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text,Image, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { firebase, db } from './firebase'; 
@@ -66,7 +67,8 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TripAid</Text>
+      <Image source={require('./assets/icon.png')} style={styles.logo} />
+      <Text style={styles.title}>TREKMATE</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -81,8 +83,6 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
         value={password}
       />
       <View style={styles.buttonContainer}>
-        
-        
         <TouchableOpacity style={styles.button} onPress={handleRegisterNavigation}>
           <Text>Register</Text>
         </TouchableOpacity>
@@ -91,6 +91,9 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
           <Text>Login</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity >
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -102,6 +105,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
@@ -127,5 +136,10 @@ const styles = StyleSheet.create({
   },
   buttonGap: {
     width: 15,
+  },
+  forgotPasswordText: {
+    marginTop: 10,
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
 });
