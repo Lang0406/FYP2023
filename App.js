@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { View, Text,Image, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -107,8 +106,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
     marginBottom: 16,
   },
