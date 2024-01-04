@@ -1,3 +1,8 @@
+Accept github invitation
+Make changes; commit to main/cloned repo
+Push changes to repo
+
+
 open command line
 check that nodejs and Node Package Manager has been installed; 
 --> run node -v
@@ -21,3 +26,4 @@ run following commands
 
 after running the installation commands, in the same directory, run:
 --> npx expo start
+
