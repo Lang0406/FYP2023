@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { firebase, db } from './firebase'; 
 import UserInfo from './UserInfo';
 import Register from './Register';
-import Map from './Map';
+import Map from './map';
 import Post from "./Post";
 import Comment from './Comment';
 

@@ -9,6 +9,7 @@ const Map = () => {
     longitude: 0,
     latitudeDelta: 0.02,
     longitudeDelta: 0.02,
+    tilt : 45,
   });
   const [searchText, setSearchText] = useState('');
 
@@ -59,7 +60,7 @@ const Map = () => {
         />
       </View>
 
-      <MapView style={styles.map} region={region}>
+      <MapView style={styles.map} region={region} mapType="satellite" >
         <Marker
           coordinate={{ latitude: region.latitude, longitude: region.longitude }}
           title="Current Location"
