@@ -3,13 +3,15 @@ import { View, Text, Button, Image, StyleSheet, ScrollView } from 'react-native'
 
 const UserInfoScreen = ({ navigation, route }) => {
   const { email, age, location } = route.params.user;
+  const userEmail = route.params.userEmail;
+
 
   const navigateToMap = () => {
     navigation.navigate('Map');
   };
 
   const navigateToPost = () => {
-    navigation.navigate('Post');
+    navigation.navigate('Post', { userEmail: userEmail });
   };
 
   return (

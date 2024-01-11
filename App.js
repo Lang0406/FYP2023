@@ -15,8 +15,9 @@ const Stack = createStackNavigator();
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
-  const handleLogin = async (navigation) => { 
+  const handleLogin = async (navigation) => {
     try {
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
@@ -27,17 +28,18 @@ export default function App() {
         const userData = querySnapshot.docs[0].data();
         console.log('User data from Firestore:', userData);
 
-        navigation.navigate('UserInfo', { user: userData });
+        setUserEmail(email); 
+        navigation.navigate('UserInfo', { user: userData, userEmail: email }); 
       } else {
         console.log('User data not found in Firestore');
       }
 
-      Alert.alert('Login Successful!');
+      Alert.alert('Login Successful', 'Welcome back!');
     } catch (error) {
       console.error('Error logging in:', error.message);
       Alert.alert('Login Error', error.message);
     }
-  };
+  }
 
   return (
     <NavigationContainer>

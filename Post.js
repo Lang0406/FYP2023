@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal } from 'react-native';
 import { db } from './firebase';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute  } from '@react-navigation/native';
 
 const Post = () => {
+  const route = useRoute();
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [newPostDescription, setNewPostDescription] = useState('');
+  const [userEmail, setUserEmail] = useState(route.params?.userEmail || ''); 
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -24,6 +26,11 @@ const Post = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+  
+    setUserEmail(userEmail);
+  }, [userEmail]);
+
   const handlePostClick = (post) => {
     navigation.navigate('Comment', { post });
   };
@@ -34,30 +41,29 @@ const Post = () => {
 
   const handleAddPost = async () => {
     try {
-      const userEmail = 'user@example.com';
-  
-
+      if (!userEmail) {
+        console.error('User email is not available');
+        return;
+      }
+     
+      
       const timestamp = new Date().getTime();
-      const randomNumber = Math.floor(Math.random() * 10000); 
+      const randomNumber = Math.floor(Math.random() * 10000);
       const postId = `${timestamp}-${randomNumber}`;
-  
 
       const newPost = {
         description: newPostDescription,
         time: new Date().toISOString(),
         userEmail: userEmail,
-        postId : postId,
+        postId: postId,
       };
-  
-  
+
       await db.collection('posts').doc(postId).set(newPost);
-  
-  
+
       const querySnapshot = await db.collection('posts').get();
       const postsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setPosts(postsData);
-  
-    
+
       setNewPostDescription('');
       setNewPostModalVisible(false);
     } catch (error) {
@@ -68,6 +74,7 @@ const Post = () => {
   const filteredPosts = posts.filter(post =>
     post.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
 
   return (
     <View style={styles.container}>
