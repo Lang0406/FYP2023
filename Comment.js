@@ -43,9 +43,13 @@ const Comment = ({ route }) => {
         <View>
           {comments.map((comment, index) => (
             <View key={index} style={styles.commentContainer}>
-              <Text>{comment.description}</Text>
-              <Text>Date: {comment.time}</Text>
-              <Text>User Email: {comment.userEmail}</Text>
+              <View style={styles.descriptionContainer}>
+                <Text style={styles.descriptionText}>{comment.description}</Text>
+              </View>
+              <View style={styles.detailsContainer}>
+                <Text>Date: {comment.time}</Text>
+                <Text>User Email: {comment.userEmail}</Text>
+              </View>
             </View>
           ))}
         </View>
@@ -64,6 +68,13 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
   },
+  commentContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
   descriptionContainer: {
     marginBottom: 8,
   },
@@ -72,16 +83,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   detailsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  commentContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    flexDirection: 'column', 
+    alignItems: 'flex-start', 
   },
 });
 

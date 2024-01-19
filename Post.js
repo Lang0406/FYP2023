@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } from 'react-native';
 import { db } from './firebase';
-import { useNavigation,useRoute  } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const Post = () => {
   const route = useRoute();
@@ -9,14 +9,16 @@ const Post = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [newPostDescription, setNewPostDescription] = useState('');
-  const [userEmail, setUserEmail] = useState(route.params?.userEmail || ''); 
+  const [userEmail, setUserEmail] = useState(route.params?.userEmail || '');
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 5; // Number of posts to display per page
   const navigation = useNavigation();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const querySnapshot = await db.collection('posts').get();
-        const postsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const postsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setPosts(postsData);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -27,7 +29,6 @@ const Post = () => {
   }, []);
 
   useEffect(() => {
-  
     setUserEmail(userEmail);
   }, [userEmail]);
 
@@ -45,15 +46,14 @@ const Post = () => {
         console.error('User email is not available');
         return;
       }
-     
-      
+
       const timestamp = new Date().getTime();
       const randomNumber = Math.floor(Math.random() * 10000);
       const postId = `${timestamp}-${randomNumber}`;
 
       const newPost = {
         description: newPostDescription,
-        time: new Date().toISOString(),
+        time: new Date().toLocaleString(),
         userEmail: userEmail,
         postId: postId,
       };
@@ -61,7 +61,7 @@ const Post = () => {
       await db.collection('posts').doc(postId).set(newPost);
 
       const querySnapshot = await db.collection('posts').get();
-      const postsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const postsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setPosts(postsData);
 
       setNewPostDescription('');
@@ -71,10 +71,36 @@ const Post = () => {
     }
   };
 
-  const filteredPosts = posts.filter(post =>
+  const filteredPosts = posts.filter((post) =>
     post.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const renderPostItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.postContainer}
+      onPress={() => handlePostClick(item)}
+    >
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.descriptionText}>{item.description}</Text>
+      </View>
+      <View style={styles.detailsContainer}>
+        <Text>Date: {item.time}</Text>
+        <Text style={styles.userEmail}>User Email: {item.userEmail}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
 
   return (
     <View style={styles.container}>
@@ -84,21 +110,28 @@ const Post = () => {
         onChangeText={(text) => setSearchTerm(text)}
         value={searchTerm}
       />
-      {filteredPosts.map((post, index) => (
+      <FlatList
+        data={currentPosts}
+        renderItem={renderPostItem}
+        keyExtractor={(item) => item.id}
+      />
+      <View style={styles.paginationContainer}>
         <TouchableOpacity
-          key={index}
-          style={styles.postContainer}
-          onPress={() => handlePostClick(post)}
+          style={styles.paginationButton}
+          onPress={handlePrevPage}
+          disabled={currentPage === 1}
         >
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.descriptionText}>{post.description}</Text>
-          </View>
-          <View style={styles.detailsContainer}>
-            <Text>Date: {post.time}</Text>
-            <Text>User Email: {post.userEmail}</Text>
-          </View>
+          <Text style={styles.paginationButtonText}>Previous Page</Text>
         </TouchableOpacity>
-      ))}
+        <Text style={styles.pageNumberText}>Page {currentPage}</Text>
+        <TouchableOpacity
+          style={styles.paginationButton}
+          onPress={handleNextPage}
+          disabled={indexOfLastPost >= filteredPosts.length}
+        >
+          <Text style={styles.paginationButtonText}>Next Page</Text>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.newPostButton} onPress={handleNewPost}>
         <Text style={styles.newPostButtonText}>New Post</Text>
       </TouchableOpacity>
@@ -121,7 +154,10 @@ const Post = () => {
             <TouchableOpacity style={styles.modalButton} onPress={handleAddPost}>
               <Text style={styles.modalButtonText}>Add Post</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setNewPostModalVisible(false)}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setNewPostModalVisible(false)}
+            >
               <Text style={styles.modalButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -130,6 +166,7 @@ const Post = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     padding: 16,
@@ -156,9 +193,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   detailsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+
+  userEmail: {
+    marginTop: 5,
   },
   newPostButton: {
     backgroundColor: '#3498db',
@@ -191,6 +231,7 @@ const styles = StyleSheet.create({
   modalInput: {
     height: 40,
     borderColor: 'gray',
+
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
