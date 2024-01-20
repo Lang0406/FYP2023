@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text,Image, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { firebase, db } from './firebase'; 
 import UserInfo from './UserInfo';
 import Register from './Register';
@@ -9,7 +10,7 @@ import Map from './map';
 import Post from "./Post";
 import Comment from './Comment';
 
-
+const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -29,7 +30,10 @@ export default function App() {
         console.log('User data from Firestore:', userData);
 
         setUserEmail(email); 
-        navigation.navigate('UserInfo', { user: userData, userEmail: email }); 
+        navigation.navigate('HomePage', {
+          screen: 'UserInfo',
+          params: { user: userData, userEmail: email },
+         }); 
       } else {
         console.log('User data not found in Firestore');
       }
@@ -50,14 +54,11 @@ export default function App() {
            />}
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} /> 
-        <Stack.Screen name="UserInfo" component={UserInfo} />
-        <Stack.Screen name="Map" component={Map} />
-        <Stack.Screen name="Post" component={Post} />
-        <Stack.Screen name="Comment" component={Comment} />
+        <Stack.Screen options={{headerShown: false}} name="HomePage" component={HomePage} />
 
-
-      </Stack.Navigator>
+      </Stack.Navigator>      
     </NavigationContainer>
+
   );
 }
 
@@ -98,6 +99,25 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
     </View>
   );
 };
+
+const HomePage = ({ navigation, route }) => {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
+      <Drawer.Screen name="Forum" component={Forum}></Drawer.Screen>
+      <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
+    </Drawer.Navigator>
+  );
+}
+
+const Forum = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Post" component={Post} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="Comment" component={Comment} options={{headerShown: false}}></Stack.Screen>
+    </Stack.Navigator>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
