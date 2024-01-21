@@ -13,6 +13,13 @@ const Map = () => {
   });
   const [searchText, setSearchText] = useState('');
 
+  const markers = [
+    {id:1, title:'Hua Fong Kee Roasted Duck', coordinate: { latitude: 1.3406743389429967, longitude: 103.8465852246636} },
+    {id:2, title:'Hua Fong Kee Roasted Duck', coordinate: { latitude: 1.3385479391033848, longitude: 103.84436796699089} },
+    {id:3, title:"Lola's Cafe", coordinate: { latitude: 1.3616640960718158, longitude: 103.88595747204695} },
+    {id:4, title:"Lola's Cafe", coordinate: { latitude: 1.3121194086456571, longitude: 103.7943036522657} },
+  ]
+
   useEffect(() => {
     const getLocationAsync = async () => {
       try {
@@ -60,11 +67,18 @@ const Map = () => {
         />
       </View>
 
-      <MapView style={styles.map} region={region} mapType="satellite" >
+      <MapView style={styles.map} region={region}>
         <Marker
           coordinate={{ latitude: region.latitude, longitude: region.longitude }}
           title="Current Location"
         />
+        {markers.map(marker => (
+          <Marker
+            key={marker.id}
+            coordinate={marker.coordinate}
+            title={marker.title}
+          />  
+        ))}
       </MapView>
     </View>
   );
