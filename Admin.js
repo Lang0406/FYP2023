@@ -20,21 +20,27 @@ const Admin = () => {
       }, []);
       
       const renderUserItem = ({ item }) => (
-        <TouchableOpacity
-          style={styles.container}
-          //onPress={() => handlePostClick(item)}
-        >
-          <View style={styles.container}>
-            <Text style={styles.container}>Email: {item.email}</Text>
-            <Text style={styles.container}>Gender: {item.gender}</Text>
-            <Text style={styles.container}>Age: {item.age}</Text>
-            <Text style={styles.container}>Location: {item.location}</Text>
-          </View>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            style={styles.container}
+            //onPress={() => handlePostClick(item)}
+          >
+            <View>
+              <Text style={styles.text}>Email: {item.email}</Text>
+              <Text style={styles.text}>Gender: {item.gender}</Text>
+              <Text style={styles.text}>Age: {item.age}</Text>
+              <Text style={styles.text}>Location: {item.location}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
       );  
 
     return (
         <View>
+            <TouchableOpacity style={styles.button}>
+              <Text>Create New User</Text>
+            </TouchableOpacity>
             <FlatList
                 data={userAccounts}
                 renderItem={renderUserItem}
@@ -45,11 +51,21 @@ const Admin = () => {
 }
 
 const styles = StyleSheet.create({
+    button:{
+      width: '50%',
+      padding: 16,
+      borderBottomWidth: 1,
+      borderRightWidth: 1,
+      alignItems: 'center',
+    },
     container: {
       padding: 16,
+      borderWidth: 1,
+      margin: 10,
+      borderRadius: 8,
     },
-    userContainer: {
-
+    text: {
+      padding: 10,
     },
 });
 
