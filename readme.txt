@@ -23,6 +23,10 @@ run following commands
 --> expo install @react-native-community/geolocation
 --> npm install react-native-geolocation-service
 --> npm install uuid
+--> npm install @react-navigation/drawer
+--> npx expo install react-native-gesture-handler react-native-reanimated
+--> npm install react-native-maps-directions
+
 
 after running the installation commands, in the same directory, run:
 --> npx expo start
