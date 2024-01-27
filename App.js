@@ -9,6 +9,7 @@ import Register from './Register';
 import Map from './map';
 import Post from "./Post";
 import Comment from './Comment';
+import Admin from './Admin';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -106,6 +107,7 @@ const HomePage = ({ navigation, route }) => {
       <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
       <Drawer.Screen name="Forum" component={Forum}></Drawer.Screen>
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
+      <Drawer.Screen name="Admin" component={Admin}></Drawer.Screen>
     </Drawer.Navigator>
   );
 }
