@@ -20,22 +20,22 @@ const Admin = () => {
         };
     
         fetchUsers();
-      }, []);
+      });
 
       //Handle create user
       const handleUserCreate = () => {
         const item = {
-          id: "insert id here"
+          id: null
         };
-        console.log('Create', item);
+        navigation.navigate('AdminUserAccount', {item})
       }
 
       //Handle edit user
       const handleUserEdit = item => {
-        console.log('Edit', item)
+        navigation.navigate('AdminUserAccount', {item})
       }
 
-      //Handle suspend user
+      //Handle suspend user (in progress)
       const handleUserSuspend = item => {
         console.log('Suspend', item)
       }

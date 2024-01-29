@@ -10,6 +10,7 @@ import Map from './map';
 import Post from "./Post";
 import Comment from './Comment';
 import Admin from './Admin';
+import AdminUserAccount from './AdminUserAccount';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -107,7 +108,7 @@ const HomePage = ({ navigation, route }) => {
       <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
       <Drawer.Screen name="Forum" component={Forum}></Drawer.Screen>
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
-      <Drawer.Screen name="Admin" component={Admin}></Drawer.Screen>
+      <Drawer.Screen name="Admin" component={SysAdmin}></Drawer.Screen>
     </Drawer.Navigator>
   );
 }
@@ -117,6 +118,15 @@ const Forum = () => {
     <Stack.Navigator>
       <Stack.Screen name="Post" component={Post} options={{headerShown: false}}></Stack.Screen>
       <Stack.Screen name="Comment" component={Comment} options={{headerShown: false}}></Stack.Screen>
+    </Stack.Navigator>
+  );
+}
+
+const SysAdmin = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="SysAdminMain" component={Admin} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
 }
