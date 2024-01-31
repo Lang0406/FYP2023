@@ -27,6 +27,10 @@ run following commands
 --> npx expo install react-native-gesture-handler react-native-reanimated
 --> npm install react-native-maps-directions
 
+30/1/2024
+-->npm install react-native-datepicker --save
+-->npm install @react-native-community/datetimepicker --save
+-->expo install @react-native-community/datetimepicker@7.2.0
 
 after running the installation commands, in the same directory, run:
 --> npx expo start

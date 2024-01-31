@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "7.2.0",
     "@react-native-community/geolocation": "^3.1.0",
     "@react-native-firebase/app": "^18.7.1",
     "@react-native-firebase/firestore": "^18.7.1",
@@ -21,6 +22,7 @@
     "firebase": "^10.7.1",
     "react": "18.2.0",
     "react-native": "0.72.6",
+    "react-native-datepicker": "^1.7.2",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-maps": "^1.7.1",

@@ -29,11 +29,21 @@ const Post = () => {
   }, []);
 
   useEffect(() => {
+    if (route.params?.userEmail) {
+      setUserEmail(route.params.userEmail);
+    }
+  }, [route.params?.userEmail]);
+
+  useEffect(() => {
     setUserEmail(userEmail);
   }, [userEmail]);
 
+  useEffect(() => {
+    console.log('User Email on Post Page:', userEmail);
+  }, [userEmail]);
+
   const handlePostClick = (post) => {
-    navigation.navigate('Comment', { post });
+    navigation.navigate('Comment', { post, userEmail });
   };
 
   const handleNewPost = () => {

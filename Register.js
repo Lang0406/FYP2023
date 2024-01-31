@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebase, db } from './firebase';
 
 const Register = ({ navigation }) => {
@@ -8,37 +9,42 @@ const Register = ({ navigation }) => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [location, setLocation] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleRegister = async () => {
     try {
-    
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
-  
+
       if (!user) {
-    
-        Alert.alert('Registration Error !');
+        Alert.alert('Registration Error!');
         return;
       }
-  
 
       await db.collection('users').doc(user.uid).set({
         email,
-        age: parseInt(age, 10), 
+        age,
         gender,
         location,
       });
-  
-      
+
       Alert.alert('Registration Successful', 'Welcome to the app!');
-  
-    
+
       navigation.goBack();
     } catch (error) {
       console.error('Error registering user:', error.message);
-    
       Alert.alert('Registration Error', error.message);
     }
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || new Date();
+    setShowDatePicker(false);
+
+    // Format the date as dd/mm/yyyy
+    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+
+    setAge(formattedDate);
   };
 
   return (
@@ -57,13 +63,20 @@ const Register = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Age"
-        onChangeText={(text) => setAge(text)}
-        value={age}
-        keyboardType="numeric" 
-      />
+      <View style={styles.datePickerContainer}>
+        <Text style={styles.datePickerLabel}>Birthday:</Text>
+        <Text style={styles.datePickerValue} onPress={() => setShowDatePicker(true)}>
+          {age}
+        </Text>
+        {showDatePicker && (
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display="spinner"
+            onChange={handleDateChange}
+          />
+        )}
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Gender"
@@ -100,6 +113,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+  },
+  datePickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  datePickerLabel: {
+    marginRight: 10,
+  },
+  datePickerValue: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
   },
 });
 
