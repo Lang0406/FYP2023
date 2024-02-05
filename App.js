@@ -106,7 +106,7 @@ const HomePage = ({ navigation, route }) => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
-      <Drawer.Screen name="Forum" component={Forum}></Drawer.Screen>
+      <Drawer.Screen name="Forum" component={Forum} ></Drawer.Screen>
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
       <Drawer.Screen name="Admin" component={SysAdmin}></Drawer.Screen>
     </Drawer.Navigator>
