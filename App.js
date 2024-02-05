@@ -56,7 +56,9 @@ export default function App() {
            />}
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} /> 
-        <Stack.Screen options={{headerShown: false}} name="HomePage" component={HomePage} />
+        <Stack.Screen name="HomePage" options={{headerShown: false}}>
+          {props => <HomePage data={email}/>}
+        </Stack.Screen>
 
       </Stack.Navigator>      
     </NavigationContainer>
@@ -102,21 +104,27 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
   );
 };
 
-const HomePage = ({ navigation, route }) => {
+const HomePage = ( data ) => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
-      <Drawer.Screen name="Forum" component={Forum} ></Drawer.Screen>
+      <Drawer.Screen name="Forum">
+        {props => <Forum {...props} data={data.data} />}
+      </Drawer.Screen>
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
-      <Drawer.Screen name="Admin" component={SysAdmin}></Drawer.Screen>
+      <Drawer.Screen name="Admin">
+        {props => <SysAdmin {...props} route={data} />}
+      </Drawer.Screen>
     </Drawer.Navigator>
   );
 }
 
-const Forum = () => {
+const Forum = ( data ) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Post" component={Post} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="Post" options={{headerShown: false}}>
+        {props => <Post data={data.data} />}
+      </Stack.Screen>
       <Stack.Screen name="Comment" component={Comment} options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
