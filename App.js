@@ -113,7 +113,7 @@ const HomePage = ( data ) => {
       </Drawer.Screen>
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
       <Drawer.Screen name="Admin">
-        {props => <SysAdmin {...props} route={data} />}
+        {props => <SysAdmin route={data.data} />}
       </Drawer.Screen>
     </Drawer.Navigator>
   );
@@ -130,7 +130,7 @@ const Forum = ( data ) => {
   );
 }
 
-const SysAdmin = () => {
+const SysAdmin = ( data ) => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="SysAdminMain" component={Admin} options={{headerShown: false}}></Stack.Screen>
