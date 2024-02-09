@@ -11,7 +11,7 @@ const UserInfoScreen = ({ navigation, route }) => {
   };
 
   const navigateToPost = () => {
-    navigation.navigate('Post', { userEmail: userEmail });
+    navigation.navigate('Forum', { userEmail: userEmail });
   };
 
   return (

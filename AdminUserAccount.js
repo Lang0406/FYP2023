@@ -9,6 +9,7 @@ const AdminUserAccount = ({route}) => {
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [location, setLocation] = useState('');
+    const [role, setRole] = useState('');
     const [id, setID] = useState('');
 
     const navigation = useNavigation();
@@ -22,6 +23,7 @@ const AdminUserAccount = ({route}) => {
         setGender(item.gender)
         setLocation(item.location)
         setID(item.id)
+        setRole(item.role ? item.role : "")
     }, [item]);
 
     const handleUserAccount = async () => {
@@ -42,6 +44,7 @@ const AdminUserAccount = ({route}) => {
                     age: parseInt(age, 10),
                     gender,
                     location,
+                    role,
                 });
     
                 Alert.alert('Account successfully created!')
@@ -57,7 +60,8 @@ const AdminUserAccount = ({route}) => {
                 db.collection('users').doc(id).update({
                     gender,
                     age,
-                    location
+                    location,
+                    role,
                 })
                 Alert.alert('Changes saved successfully!')
             }catch(error){
@@ -101,6 +105,12 @@ const AdminUserAccount = ({route}) => {
                 placeholder="Location"
                 onChangeText={(text) => setLocation(text)}
                 value={location}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Role"
+                onChangeText={(text) => setRole(text)}
+                value={role}
             />
             <TouchableOpacity style={styles.button} onPress={() => handleUserAccount()}>
                 <Text>{headerText}</Text>

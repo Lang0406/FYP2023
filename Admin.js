@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react
 import { db } from './firebase';
 import { useNavigation } from '@react-navigation/native';
 
-const Admin = () => {
+const Admin = ({ route, navigation }) => {
+    //console.log(route)
+    //console.log(navigation)
     const [userAccounts, setUserAccounts] = useState([]);
-    const navigation = useNavigation();
+    //const navigation = useNavigation();
 
     //Fetch users when page loads
     useEffect(() => {
