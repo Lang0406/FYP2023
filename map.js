@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
-import { db } from './firebase'; // Update this import based on your Firebase setup
+import { db } from './firebase'; 
 
 const Map = () => {
   const [region, setRegion] = useState({
@@ -59,7 +59,7 @@ const Map = () => {
 
   const handleSearch = () => {
     console.log('Searching for:', searchText);
-    // Implement your search logic using Firebase queries
+    
   };
 
   const validMarkers = markers.filter(marker => marker.coordinate && marker.coordinate.latitude && marker.coordinate.longitude);
@@ -67,7 +67,7 @@ const Map = () => {
   const groupByRoute = (markers) => {
     const groupedMarkers = {};
     markers.forEach(marker => {
-      const route = marker.route || 'noRoute'; // Assign 'noRoute' for markers without a route
+      const route = marker.route || 'noRoute';
       if (!groupedMarkers[route]) {
         groupedMarkers[route] = [];
       }
@@ -99,7 +99,7 @@ const Map = () => {
           title="Current Location"
         />
 
-        {Object.values(groupedMarkers).map((group, index) => (
+        {Object.entries(groupedMarkers).map(([route, group], index) => (
           <React.Fragment key={index}>
             {group.map(marker => (
               <Marker
@@ -112,7 +112,7 @@ const Map = () => {
                 pinColor={marker.color}
               />
             ))}
-            {group.length >= 2 && (
+            {route !== 'noRoute' && group.length >= 2 && (
               <MapViewDirections
                 origin={{
                   latitude: parseFloat(group[0].coordinate.latitude),
@@ -131,7 +131,7 @@ const Map = () => {
                 apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
                 mode="WALKING"
                 strokeWidth={3}
-                strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`} // Random color
+                strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`} 
               />
             )}
           </React.Fragment>
