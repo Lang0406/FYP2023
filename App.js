@@ -11,6 +11,7 @@ import Post from "./Post";
 import Comment from './Comment';
 import Admin from './Admin';
 import AdminUserAccount from './AdminUserAccount';
+import Markers from './Markers';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -114,7 +115,9 @@ const HomePage = ( data ) => {
       <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
       <Drawer.Screen name="Admin">
         {props => <SysAdmin route={data.data} />}
+        
       </Drawer.Screen>
+      <Drawer.Screen name="Maker" component={Markers}></Drawer.Screen>
     </Drawer.Navigator>
   );
 }
