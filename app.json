@@ -22,7 +22,8 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location for some feature",
         "NSLocationAlwaysUsageDescription": "We need your location for some feature"
-      }
+      },
+      "bundleIdentifier": "com.derpfreako.YourProjectName"
     },
     "android": {
       "adaptiveIcon": {

@@ -26,6 +26,7 @@ run following commands
 --> npm install @react-navigation/drawer
 --> npx expo install react-native-gesture-handler react-native-reanimated
 --> npm install react-native-maps-directions
+--> npm install -g eas-cli
 
 30/1/2024
 -->npm install react-native-datepicker --save
