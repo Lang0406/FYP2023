@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, FlatList } from 'react-native';
 import { firebase, db } from './firebase';
 import { useNavigation } from '@react-navigation/native';
+import { Dropdown } from 'react-native-element-dropdown';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const AdminUserAccount = ({route}) => {
     const [email, setEmail] = useState('');
@@ -25,6 +27,11 @@ const AdminUserAccount = ({route}) => {
         setID(item.id)
         setRole(item.role ? item.role : "")
     }, [item]);
+
+    const data = [
+        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+      ];
 
     const handleUserAccount = async () => {
         //Handle create
@@ -72,6 +79,22 @@ const AdminUserAccount = ({route}) => {
 
     }
 
+    const renderItem = item => {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.textItem}>{item.label}</Text>
+          {item.value == role && (
+            <AntDesign
+              style={styles.icon}
+              color="black"
+              name="Safety"
+              size={20}
+            />
+          )}
+        </View>
+      );
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{headerText} User</Text>
@@ -106,11 +129,23 @@ const AdminUserAccount = ({route}) => {
                 onChangeText={(text) => setLocation(text)}
                 value={location}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Role"
-                onChangeText={(text) => setRole(text)}
-                value={role}
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              iconStyle={styles.iconStyle}
+              data={data}
+              labelField="label"
+              valueField="value"
+              placeholder="Select role"
+              value={role}
+              onChange={item => {
+                setRole(item.value);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+              )}
+              renderItem={renderItem}
             />
             <TouchableOpacity style={styles.button} onPress={() => handleUserAccount()}>
                 <Text>{headerText}</Text>
@@ -137,6 +172,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 16,
         paddingLeft: 8,
+        borderRadius: 5,
       },
       button:{
         width: '50%',
@@ -144,6 +180,49 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center',
         marginTop: 50,
+      },
+      dropdownContainer : {
+        alignItems: 'flex-start',
+      },
+      dropdown: {
+        margin: 10,
+        height: 50,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        borderWidth: 1,
+        padding: 12,
+        paddingHorizontal: 110,
+        alignSelf: 'stretch',
+      },
+      icon: {
+        marginRight: 5,
+      },
+      item: {
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+      textItem: {
+        flex: 1,
+        fontSize: 16,
+        color: 'black',
+      },
+      placeholderStyle: {
+        fontSize: 16,
+        color: 'black',
+      },
+      selectedTextStyle: {
+        fontSize: 16,
+        margin: 60,
+      },
+      iconStyle: {
+        width: 20,
+        height: 20,
+      },
+      inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
       },
   });
 

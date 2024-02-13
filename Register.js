@@ -9,7 +9,9 @@ const Register = ({ navigation }) => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [location, setLocation] = useState('');
+  const [role, setRole] = useState('user')
   const [showDatePicker, setShowDatePicker] = useState(false);
+
 
   const handleRegister = async () => {
     try {
@@ -26,6 +28,7 @@ const Register = ({ navigation }) => {
         age,
         gender,
         location,
+        role,
       });
 
       Alert.alert('Registration Successful', 'Welcome to the app!');
