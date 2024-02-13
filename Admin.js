@@ -50,6 +50,7 @@ const Admin = ({ route, navigation }) => {
             <Text style={styles.text}>Gender: {item.gender}</Text>
             <Text style={styles.text}>Age: {item.age}</Text>
             <Text style={styles.text}>Location: {item.location}</Text>
+            <Text style={styles.text}>Role: {item.role}</Text>
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.buttonEdit} onPress={() => handleUserEdit(item)}>
                 <Text>Edit</Text>
