@@ -34,6 +34,11 @@ run following commands
 -->npm install @react-native-community/datetimepicker --save
 -->expo install @react-native-community/datetimepicker@7.2.0
 
+13/2/2024
+
+npm install react-native-mail --save
+npm install react-native-elements
+
 after running the installation commands, in the same directory, run:
 --> npx expo start
 

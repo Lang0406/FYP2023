@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { db } from './firebase';
 
 const Comment = ({ route }) => {
   const { post } = route.params;
   const [comments, setComments] = useState([]);
   const [commentDescription, setCommentDescription] = useState('');
-  const [userEmail, setUserEmail] = useState(route.params?.userEmail || '');
+  const [email, setUserEmail] = useState(route.params?.email || '');
+  const [role, setUserRole] = useState(route.params?.role || '');
 
   const fetchComments = async () => {
     try {
@@ -29,6 +30,14 @@ const Comment = ({ route }) => {
     fetchComments();
   }, [post]);
 
+  useEffect(() => {
+    console.log('User Email on Post Page:', email);
+  }, [email]);
+
+  useEffect(() => {
+    console.log('User Role on Post Page:', role);
+  }, [role]);
+
   const handlePostComment = async () => {
     try {
       if (!commentDescription) {
@@ -40,11 +49,14 @@ const Comment = ({ route }) => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const commentId = `${timestamp}-${randomNumber}`;
   
+      const isInfluencer = role === 'influencer'; // Set isInfluencer flag based on role
+
       await db.collection('comments').doc(commentId).set({
         postId: post.postId,
         description: commentDescription,
         time: new Date().toLocaleString(),
-        userEmail: userEmail, // Use userEmail state directly
+        userEmail: email, // Use userEmail state directly
+        isInfluencer: isInfluencer, // Add isInfluencer flag to the comment
       });
   
       setCommentDescription('');
@@ -54,9 +66,34 @@ const Comment = ({ route }) => {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const commentRef = db.collection('comments').doc(commentId);
+      const commentDoc = await commentRef.get();
+
+      if (!commentDoc.exists) {
+        console.error('Comment does not exist.');
+        return;
+      }
+
+      const commentData = commentDoc.data();
+
+  
+      if (commentData.userEmail === email || role === 'admin') {
+        await commentRef.delete();
+        fetchComments();
+      } else {
+        Alert.alert('Permission Denied', 'You do not have permission to delete this comment.');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <View>
       <View style={styles.postContainer}>
+        {/* Display post details */}
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>{post.description}</Text>
         </View>
@@ -83,7 +120,10 @@ const Comment = ({ route }) => {
               </View>
               <View style={styles.detailsContainer}>
                 <Text>Date: {comment.time}</Text>
-                <Text>User Email: {comment.userEmail}</Text>
+                <Text>User Email: {comment.userEmail} {comment.isInfluencer ? '✓' : ''}</Text>
+                {(comment.userEmail === email || role === 'admin') && (
+                  <Button title="Delete" onPress={() => handleDeleteComment(comment.id)} />
+                )}
               </View>
             </View>
           ))}

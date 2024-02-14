@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList, Button } from 'react-native';
 import { db } from './firebase';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Post = ( {email, role} ) => {
+const Post = ({ email, role }) => {
   const route = useRoute();
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [newPostModalVisible, setNewPostModalVisible] = useState(false);
   const [newPostDescription, setNewPostDescription] = useState('');
   const [userEmail, setUserEmail] = useState(route.params?.userEmail || '');
+
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5; // Number of posts to display per page
   const navigation = useNavigation();
@@ -35,16 +36,20 @@ const Post = ( {email, role} ) => {
   }, [route.params?.userEmail]);
 
   useEffect(() => {
-    setUserEmail(userEmail);
-  }, [userEmail]);
+    setUserEmail(email);
+  }, [email]);
 
   useEffect(() => {
-    setUserEmail(email)
-    console.log('User Email on Post Page:', userEmail);
-  }, [userEmail]);
+    setUserEmail(userEmail);
+    console.log('User Email on Post Page:', email);
+  }, [email]);
+
+  useEffect(() => {
+    console.log('User Role on Post Page:', role);
+  }, [role]);
 
   const handlePostClick = (post) => {
-    navigation.navigate('Comment', { post, userEmail });
+    navigation.navigate('Comment', { post, email, role });
   };
 
   const handleNewPost = () => {
@@ -53,7 +58,7 @@ const Post = ( {email, role} ) => {
 
   const handleAddPost = async () => {
     try {
-      if (!userEmail) {
+      if (!email) {
         console.error('User email is not available');
         return;
       }
@@ -62,11 +67,14 @@ const Post = ( {email, role} ) => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const postId = `${timestamp}-${randomNumber}`;
 
+      const isInfluencer = role === 'influencer'; // Set isInfluencer flag based on role
+
       const newPost = {
         description: newPostDescription,
         time: new Date().toLocaleString(),
-        userEmail: userEmail,
+        userEmail: email,
         postId: postId,
+        isInfluencer: isInfluencer, // Add isInfluencer flag to the post
       };
 
       await db.collection('posts').doc(postId).set(newPost);
@@ -79,6 +87,16 @@ const Post = ( {email, role} ) => {
       setNewPostModalVisible(false);
     } catch (error) {
       console.error('Error adding post:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await db.collection('posts').doc(postId).delete();
+      const updatedPosts = posts.filter((post) => post.id !== postId);
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -100,11 +118,15 @@ const Post = ( {email, role} ) => {
       </View>
       <View style={styles.detailsContainer}>
         <Text>Date: {item.time}</Text>
-        <Text style={styles.userEmail}>User Email: {item.userEmail}</Text>
+        <Text style={styles.userEmail}>
+          User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
+        </Text>
+        {(item.userEmail === email || role === 'admin') && ( // Check if current user can delete post
+          <Button title="Delete" onPress={() => handleDeletePost(item.id)} />
+        )}
       </View>
     </TouchableOpacity>
   );
-
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
@@ -207,7 +229,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-
   userEmail: {
     marginTop: 5,
   },
@@ -222,7 +243,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
   },
-
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -242,7 +262,6 @@ const styles = StyleSheet.create({
   modalInput: {
     height: 40,
     borderColor: 'gray',
-
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
@@ -256,6 +275,23 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: '#fff',
+    fontSize: 16,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  paginationButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 8,
+  },
+  paginationButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  pageNumberText: {
     fontSize: 16,
   },
 });

@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Button, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, ScrollView, Linking } from 'react-native';
+import { Tooltip } from 'react-native-elements';
 
 const UserInfoScreen = ({ navigation, route }) => {
-  const { email, age, location } = route.params.user;
+  const { email, age, location, role } = route.params.user;
   const userEmail = route.params.userEmail;
-
+  const isVerifiedInfluencer = role === 'influencer';
 
   const navigateToMap = () => {
     navigation.navigate('Map');
@@ -14,11 +15,24 @@ const UserInfoScreen = ({ navigation, route }) => {
     navigation.navigate('Forum', { userEmail: userEmail });
   };
 
+  const sendVerificationEmail = () => {
+    const recipientEmail = 'simfyp2023@gmail.com';
+    const subject = 'Influencer Verification Request';
+    const body = 'I want to verify as an influencer. I will like to prove my identity with following material.';
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+
+    Linking.openURL(mailtoUrl).catch((err) => console.error('An error occurred', err));
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.infoContainer}>
         <Image source={require('./assets/pf.jpg')} style={styles.logo} />
-        <Text>Email: {email}</Text>
+        <Text>Email: 
+          <Tooltip popover={<Text>Verified Influencer</Text>} width={200} height={40} >
+            <Text style={styles.emailText}>{email} {isVerifiedInfluencer && '✓'}</Text>
+          </Tooltip>
+        </Text>
         <Text>Age: {age}</Text>
         <Text>Location: {location}</Text>
         <Button title="Map" onPress={navigateToMap} />
@@ -38,7 +52,7 @@ const UserInfoScreen = ({ navigation, route }) => {
       </View>
 
       <View style={styles.verifyContainer}>
-        <Text style={styles.verifyText}>Verify as Influencer</Text>
+        <Button title="Verify as Influencer" onPress={sendVerificationEmail} />
       </View>
     </ScrollView>
   );
@@ -97,6 +111,10 @@ const styles = StyleSheet.create({
   verifyText: {
     fontSize: 16,
     color: 'green',
+  },
+  emailText: {
+    fontSize: 16,
+    color: 'black',
   },
 });
 
