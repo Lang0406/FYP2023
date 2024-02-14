@@ -49,14 +49,14 @@ const Comment = ({ route }) => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const commentId = `${timestamp}-${randomNumber}`;
   
-      const isInfluencer = role === 'influencer'; // Set isInfluencer flag based on role
+      const isInfluencer = role === 'influencer'; 
 
       await db.collection('comments').doc(commentId).set({
         postId: post.postId,
         description: commentDescription,
         time: new Date().toLocaleString(),
-        userEmail: email, // Use userEmail state directly
-        isInfluencer: isInfluencer, // Add isInfluencer flag to the comment
+        userEmail: email, 
+        isInfluencer: isInfluencer, 
       });
   
       setCommentDescription('');

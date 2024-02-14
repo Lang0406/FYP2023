@@ -67,14 +67,14 @@ const Post = ({ email, role }) => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const postId = `${timestamp}-${randomNumber}`;
 
-      const isInfluencer = role === 'influencer'; // Set isInfluencer flag based on role
+      const isInfluencer = role === 'influencer'; 
 
       const newPost = {
         description: newPostDescription,
         time: new Date().toLocaleString(),
         userEmail: email,
         postId: postId,
-        isInfluencer: isInfluencer, // Add isInfluencer flag to the post
+        isInfluencer: isInfluencer, 
       };
 
       await db.collection('posts').doc(postId).set(newPost);
@@ -121,7 +121,7 @@ const Post = ({ email, role }) => {
         <Text style={styles.userEmail}>
           User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
         </Text>
-        {(item.userEmail === email || role === 'admin') && ( // Check if current user can delete post
+        {(item.userEmail === email || role === 'admin') && ( 
           <Button title="Delete" onPress={() => handleDeletePost(item.id)} />
         )}
       </View>
