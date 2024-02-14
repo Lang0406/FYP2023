@@ -27,6 +27,7 @@ run following commands
 --> npx expo install react-native-gesture-handler react-native-reanimated
 --> npm install react-native-maps-directions
 --> npm install -g eas-cli
+--> npm install react-native-element-dropdown
 
 30/1/2024
 -->npm install react-native-datepicker --save
