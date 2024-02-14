@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } 
 import { db } from './firebase';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Post = ( data ) => {
+const Post = ( {email, role} ) => {
   const route = useRoute();
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +39,7 @@ const Post = ( data ) => {
   }, [userEmail]);
 
   useEffect(() => {
-    setUserEmail(data.data)
+    setUserEmail(email)
     console.log('User Email on Post Page:', userEmail);
   }, [userEmail]);
 

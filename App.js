@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [role, setRole] = useState('');
 
   const handleLogin = async (navigation) => {
     try {
@@ -32,7 +32,7 @@ export default function App() {
         const userData = querySnapshot.docs[0].data();
         console.log('User data from Firestore:', userData);
 
-        setUserEmail(email); 
+        setRole(userData.role)
         navigation.navigate('HomePage', {
           screen: 'UserInfo',
           params: { user: userData, userEmail: email },
@@ -58,7 +58,7 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} /> 
         <Stack.Screen name="HomePage" options={{headerShown: false}}>
-          {props => <HomePage data={email}/>}
+          {props => <HomePage email={email} role={role}/>}
         </Stack.Screen>
 
       </Stack.Navigator>      
@@ -105,35 +105,48 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
   );
 };
 
-const HomePage = ( data ) => {
+const HomePage = ( {email, role} ) => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
-      <Drawer.Screen name="Forum">
-        {props => <Forum {...props} data={data.data} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
-      <Drawer.Screen name="Admin">
-        {props => <SysAdmin route={data.data} />}
-        
-      </Drawer.Screen>
-      <Drawer.Screen name="Maker" component={Markers}></Drawer.Screen>
+      {role == 'admin' ? (
+        <>
+          <Drawer.Screen name="Forum">
+            {props => <Forum {...props} email={email} role={role} />}
+          </Drawer.Screen>
+          <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
+          <Drawer.Screen name="Marker" component={Markers}></Drawer.Screen>
+        </>
+      ) : (
+        role == 'accountmanager' ? (
+          <Drawer.Screen name="Admin">
+            {props => <SysAdmin email={email} />}
+          </Drawer.Screen>
+        ) : (
+          <>
+            <Drawer.Screen name="Forum">
+              {props => <Forum {...props} email={email} role={role} />}
+            </Drawer.Screen>
+            <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
+          </>
+        )
+      )}
     </Drawer.Navigator>
   );
 }
 
-const Forum = ( data ) => {
+const Forum = ( {email, role} ) => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Post" options={{headerShown: false}}>
-        {props => <Post data={data.data} />}
+        {props => <Post email={email} role={role} />}
       </Stack.Screen>
       <Stack.Screen name="Comment" component={Comment} options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
 }
 
-const SysAdmin = ( data ) => {
+const SysAdmin = ( {email} ) => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="SysAdminMain" component={Admin} options={{headerShown: false}}></Stack.Screen>

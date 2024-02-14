@@ -31,6 +31,7 @@ const AdminUserAccount = ({route}) => {
     const data = [
         { label: 'Admin', value: 'admin' },
         { label: 'User', value: 'user' },
+        { label: 'Account Manager', value: 'accountmanager' },
       ];
 
     const handleUserAccount = async () => {
