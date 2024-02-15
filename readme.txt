@@ -29,6 +29,10 @@ run following commands
 --> npm install -g eas-cli
 --> npm install react-native-element-dropdown
 
+
+npm install @react-native-picker/picker
+
+
 30/1/2024
 -->npm install react-native-datepicker --save
 -->npm install @react-native-community/datetimepicker --save

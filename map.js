@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
@@ -16,6 +16,8 @@ const Map = () => {
   const [searchText, setSearchText] = useState('');
   const [searchLocation, setSearchLocation] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
     const getLocationAsync = async () => {
@@ -76,21 +78,18 @@ const Map = () => {
     }
   };
 
-  const validMarkers = markers.filter(marker => marker.coordinate && marker.coordinate.latitude && marker.coordinate.longitude);
-
-  const groupByRoute = (markers) => {
-    const groupedMarkers = {};
-    markers.forEach(marker => {
-      const route = marker.route || 'noRoute';
-      if (!groupedMarkers[route]) {
-        groupedMarkers[route] = [];
-      }
-      groupedMarkers[route].push(marker);
-    });
-    return groupedMarkers;
+  const handleMarkerSelect = (markerId) => {
+    const marker = markers.find(m => m.id === markerId);
+    if (marker) {
+      setSelectedMarker(marker);
+      setRegion({
+        ...region,
+        latitude: parseFloat(marker.coordinate.latitude),
+        longitude: parseFloat(marker.coordinate.longitude),
+      });
+      setShowPicker(false);
+    }
   };
-
-  const groupedMarkers = groupByRoute(validMarkers);
 
   return (
     <View style={styles.container}>
@@ -103,6 +102,28 @@ const Map = () => {
           onSubmitEditing={handleSearch}
         />
       </View>
+
+      <TouchableOpacity style={styles.selectedMarkerContainer} onPress={() => setShowPicker(!showPicker)}>
+        <TextInput
+          style={styles.selectedMarkerText}
+          placeholder="Select a marker..."
+          value={selectedMarker ? selectedMarker.title : ''}
+          editable={false}
+        />
+      </TouchableOpacity>
+
+      {showPicker && (
+        <FlatList
+          style={styles.markerPicker}
+          data={markers}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleMarkerSelect(item.id)}>
+              <Text style={styles.markerPickerItem}>{item.title}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
 
       <MapView style={styles.map} region={region}>
         <Marker
@@ -140,42 +161,16 @@ const Map = () => {
           />
         )}
 
-        {Object.entries(groupedMarkers).map(([route, group], index) => (
-          <React.Fragment key={index}>
-            {group.map(marker => (
-              <Marker
-                key={marker.id}
-                coordinate={{
-                  latitude: parseFloat(marker.coordinate.latitude),
-                  longitude: parseFloat(marker.coordinate.longitude),
-                }}
-                title={marker.title}
-                pinColor={marker.color}
-              />
-            ))}
-            {route !== 'noRoute' && group.length >= 2 && (
-              <MapViewDirections
-                origin={{
-                  latitude: parseFloat(group[0].coordinate.latitude),
-                  longitude: parseFloat(group[0].coordinate.longitude),
-                }}
-                waypoints={group
-                  .slice(1, group.length - 1)
-                  .map(marker => ({
-                    latitude: parseFloat(marker.coordinate.latitude),
-                    longitude: parseFloat(marker.coordinate.longitude),
-                  }))}
-                destination={{
-                  latitude: parseFloat(group[group.length - 1].coordinate.latitude),
-                  longitude: parseFloat(group[group.length - 1].coordinate.longitude),
-                }}
-                apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
-                mode="WALKING"
-                strokeWidth={3}
-                strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`} 
-              />
-            )}
-          </React.Fragment>
+        {markers.map(marker => (
+          <Marker
+            key={marker.id}
+            coordinate={{
+              latitude: parseFloat(marker.coordinate.latitude),
+              longitude: parseFloat(marker.coordinate.longitude),
+            }}
+            title={marker.title}
+            pinColor={marker.color}
+          />
         ))}
       </MapView>
     </View>
@@ -210,6 +205,37 @@ const styles = StyleSheet.create({
     width: '100%',
     borderColor: '#ccc',
     borderWidth: 1,
+  },
+  selectedMarkerContainer: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    right: 20,
+    height: 40,
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedMarkerText: {
+    fontSize: 16,
+  },
+  markerPicker: {
+    position: 'absolute',
+    top: 120,
+    left: 20,
+    right: 20,
+    height: 200,
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    zIndex: 1,
+  },
+  markerPickerItem: {
+    fontSize: 16,
+    padding: 10,
   },
 });
 
