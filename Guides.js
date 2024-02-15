@@ -108,7 +108,7 @@ const Guides = () => {
         <Text style={styles.addButtonText}>Add Guides</Text>
       </TouchableOpacity>
       <FlatList
-        data={guides}
+        data={guides.filter(marker => marker.title.toLowerCase().includes(searchTerm.toLowerCase()))}
         renderItem={({ item }) => (
           <View key={item.id} style={styles.guidesContainer}>
             <Text style={styles.guidesTitle}>Title: {item.title}</Text>

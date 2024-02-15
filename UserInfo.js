@@ -102,8 +102,6 @@ const UserInfoScreen = ({ navigation, route }) => {
         </Text>
         <Text>Age: {age}</Text>
         <Text>Location: {location}</Text>
-        <Button title="Map" onPress={navigateToMap} />
-        <Button title="Forum" onPress={navigateToPost} />
         <Button title="Logout" onPress={handleLogout} />
       </View>
 
