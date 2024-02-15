@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Image, StyleSheet, ScrollView, Linking } from 'react-native';
 import { Tooltip } from 'react-native-elements';
+import { db, firebase } from './firebase'; 
 
 const UserInfoScreen = ({ navigation, route }) => {
+  const [profilePicture, setProfilePicture] = useState(require('./assets/pf.jpg'));
   const { email, age, location, role } = route.params.user;
   const userEmail = route.params.userEmail;
   const isVerifiedInfluencer = role === 'influencer';
+
+  useEffect(() => {
+    
+    const fetchUserData = async () => {
+      try {
+        const userDoc = await db.collection('users').doc(userEmail).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          if (userData.profilePicture) {
+            setProfilePicture({ uri: userData.profilePicture }); 
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error.message);
+      }
+    };
+
+    fetchUserData();
+  }, [userEmail]); 
 
   const navigateToMap = () => {
     navigation.navigate('Map');
@@ -24,10 +45,23 @@ const UserInfoScreen = ({ navigation, route }) => {
     Linking.openURL(mailtoUrl).catch((err) => console.error('An error occurred', err));
   };
 
+  const handleLogout = () => {
+    firebase.auth().signOut().then(() => {
+      // Sign-out successful.
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }).catch((error) => {
+      // An error happened.
+      console.error('Error logging out:', error.message);
+    });
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.infoContainer}>
-        <Image source={require('./assets/pf.jpg')} style={styles.logo} />
+        <Image source={profilePicture} style={styles.logo} />
         <Text>Email: 
           <Tooltip popover={<Text>Verified Influencer</Text>} width={200} height={40} >
             <Text style={styles.emailText}>{email} {isVerifiedInfluencer && '✓'}</Text>
@@ -37,6 +71,7 @@ const UserInfoScreen = ({ navigation, route }) => {
         <Text>Location: {location}</Text>
         <Button title="Map" onPress={navigateToMap} />
         <Button title="Forum" onPress={navigateToPost} />
+        <Button title="Logout" onPress={handleLogout} />
       </View>
 
       <View style={styles.articleContainer}>

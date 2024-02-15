@@ -9,37 +9,60 @@ const Register = ({ navigation }) => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [location, setLocation] = useState('');
-  const [role, setRole] = useState('user')
+  const [role, setRole] = useState('user');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [emailValid, setEmailValid] = useState(null);
+  const [passwordValid, setPasswordValid] = useState(null);
+  const [genderValid, setGenderValid] = useState(null);
+  const [locationValid, setLocationValid] = useState(null);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
+
+  const validateGenderAndLocation = (value) => {
+    return typeof value === 'string' && value.trim() !== '';
+  };
 
   const handleRegister = async () => {
+    if (!emailValid || !passwordValid || !genderValid || !locationValid) {
+      Alert.alert('Validation Error', 'Please fill in all fields correctly.');
+      return;
+    }
+  
     try {
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
-
+  
       if (!user) {
         Alert.alert('Registration Error!');
         return;
       }
-
+  
+    
       await db.collection('users').doc(user.uid).set({
         email,
         age,
         gender,
         location,
         role,
+        profilePicture: null 
       });
-
+  
       Alert.alert('Registration Successful', 'Welcome to the app!');
-
+  
       navigation.goBack();
     } catch (error) {
       console.error('Error registering user:', error.message);
       Alert.alert('Registration Error', error.message);
     }
   };
-
+  
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || new Date();
     setShowDatePicker(false);
@@ -50,22 +73,53 @@ const Register = ({ navigation }) => {
     setAge(formattedDate);
   };
 
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    setEmailValid(null);
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    setPasswordValid(null);
+  };
+
+  const handleGenderChange = (text) => {
+    setGender(text);
+    setGenderValid(null);
+  };
+
+  const handleLocationChange = (text) => {
+    setLocation(text);
+    setLocationValid(null);
+  };
+
+  const validateFields = () => {
+    setEmailValid(validateEmail(email));
+    setPasswordValid(validatePassword(password));
+    setGenderValid(validateGenderAndLocation(gender));
+    setLocationValid(validateGenderAndLocation(location));
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, emailValid === false && styles.invalidInput]}
         placeholder="Email"
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={handleEmailChange}
+        onBlur={validateFields}
         value={email}
       />
+      {emailValid === false && <Text style={styles.validationText}>{'\u2718'} Please enter a valid email address</Text>}
       <TextInput
-        style={styles.input}
+        style={[styles.input, passwordValid === false && styles.invalidInput]}
         placeholder="Password"
         secureTextEntry={true}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={handlePasswordChange}
+        onBlur={validateFields}
         value={password}
       />
+      {passwordValid === false && <Text style={styles.validationText}>{'\u2718'} Password must be at least 6 characters long</Text>}
       <View style={styles.datePickerContainer}>
         <Text style={styles.datePickerLabel}>Birthday:</Text>
         <Text style={styles.datePickerValue} onPress={() => setShowDatePicker(true)}>
@@ -81,17 +135,21 @@ const Register = ({ navigation }) => {
         )}
       </View>
       <TextInput
-        style={styles.input}
+        style={[styles.input, genderValid === false && styles.invalidInput]}
         placeholder="Gender"
-        onChangeText={(text) => setGender(text)}
+        onChangeText={handleGenderChange}
+        onBlur={validateFields}
         value={gender}
       />
+      {genderValid === false && <Text style={styles.validationText}>{'\u2718'} Please enter a valid gender</Text>}
       <TextInput
-        style={styles.input}
+        style={[styles.input, locationValid === false && styles.invalidInput]}
         placeholder="Location"
-        onChangeText={(text) => setLocation(text)}
+        onChangeText={handleLocationChange}
+        onBlur={validateFields}
         value={location}
       />
+      {locationValid === false && <Text style={styles.validationText}>{'\u2718'} Please enter a valid location</Text>}
       <Button title="Register" onPress={handleRegister} />
     </View>
   );
@@ -116,6 +174,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+  },
+  invalidInput: {
+    borderColor: 'red',
+  },
+  validationText: {
+    color: 'red',
+    marginBottom: 8,
   },
   datePickerContainer: {
     flexDirection: 'row',
