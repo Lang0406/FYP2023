@@ -143,7 +143,8 @@ const Guides = ( {role, email} ) => {
             onChangeText={(text) => setNewGuidesData({ ...newGuidesData, title: text })}
           />
           <TextInput
-            style={styles.modalInput}
+            style={[styles.modalInput, {height: 150, textAlignVertical: 'top'}]}
+            multiline= {true}
             placeholder="Description"
             value={newGuidesData.desc}
             onChangeText={(text) => setNewGuidesData({ ...newGuidesData, desc: text })}
