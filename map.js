@@ -14,6 +14,7 @@ const Map = () => {
     tilt: 45,
   });
   const [searchText, setSearchText] = useState('');
+  const [searchLocation, setSearchLocation] = useState(null);
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
@@ -57,9 +58,22 @@ const Map = () => {
     fetchMarkersFromFirebase();
   }, []);
 
-  const handleSearch = () => {
-    console.log('Searching for:', searchText);
-    
+  const handleSearch = async () => {
+    try {
+      const apiKey = 'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'; 
+      const encodedSearchText = encodeURIComponent(searchText);
+      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodedSearchText}&key=${apiKey}`);
+      const data = await response.json();
+
+      if (data.status === 'OK' && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
+        setSearchLocation({ latitude: lat, longitude: lng });
+      } else {
+        console.error('No results found');
+      }
+    } catch (error) {
+      console.error('Error searching for location:', error);
+    }
   };
 
   const validMarkers = markers.filter(marker => marker.coordinate && marker.coordinate.latitude && marker.coordinate.longitude);
@@ -98,6 +112,33 @@ const Map = () => {
           }}
           title="Current Location"
         />
+        
+        {searchLocation && (
+          <Marker
+            coordinate={{
+              latitude: parseFloat(searchLocation.latitude),
+              longitude: parseFloat(searchLocation.longitude),
+            }}
+            title="Search Location"
+          />
+        )}
+
+        {searchLocation && (
+          <MapViewDirections
+            origin={{
+              latitude: parseFloat(region.latitude),
+              longitude: parseFloat(region.longitude),
+            }}
+            destination={{
+              latitude: parseFloat(searchLocation.latitude),
+              longitude: parseFloat(searchLocation.longitude),
+            }}
+            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
+            mode="WALKING"
+            strokeWidth={3}
+            strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`} 
+          />
+        )}
 
         {Object.entries(groupedMarkers).map(([route, group], index) => (
           <React.Fragment key={index}>

@@ -79,7 +79,7 @@ const UserInfoScreen = ({ navigation, route }) => {
     if (imageURL) {
       setProfilePicture(imageURL);
       setShowProfileImages(false);
-      // Update user document in Firestore with the new profile picture URL
+      
       db.collection('users').doc(userEmail).set({ profilePicture: imageURL }, { merge: true })
         .then(() => {
           console.log('Profile picture updated successfully');
