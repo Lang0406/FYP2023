@@ -18,6 +18,7 @@ const Map = () => {
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null); // Track current location separately
 
   useEffect(() => {
     const getLocationAsync = async () => {
@@ -41,6 +42,7 @@ const Map = () => {
           latitudeDelta: 0.02,
           longitudeDelta: 0.02,
         });
+        setCurrentLocation({ latitude, longitude }); // Set current location separately
       } catch (error) {
         console.error(error);
       }
@@ -70,6 +72,11 @@ const Map = () => {
       if (data.status === 'OK' && data.results.length > 0) {
         const { lat, lng } = data.results[0].geometry.location;
         setSearchLocation({ latitude: lat, longitude: lng });
+        setRegion({
+          ...region,
+          latitude: lat,
+          longitude: lng,
+        });
       } else {
         console.error('No results found');
       }
@@ -88,30 +95,149 @@ const Map = () => {
         longitude: parseFloat(marker.coordinate.longitude),
       });
       setShowPicker(false);
+      setSearchLocation(null); //
+  
+    
+      setTimeout(() => {
+        handleMapPress(); 
+        setTimeout(handleMapPress, 1000);
+      }, 1000); 
     }
+  };
+
+  const handleTextInputFocus = () => {
+    setSelectedMarker(null); // Clear selected marker when the text input is focused
+    setShowPicker(true); // Show marker picker when the text input is focused
+  };
+
+  const clearSearchLocation = () => {
+    setSearchLocation(null); // Clear search location when triggered
+  };
+
+  const handleMapPress = () => {
+    setShowPicker(true); // Show marker picker when the map is pressed
+    setSelectedMarker(null); // Clear selected marker
+  };
+
+  const renderRoutes = () => {
+    const groupedMarkers = groupMarkersByRoute();
+    const routes = Object.entries(groupedMarkers);
+  
+    return routes.map(([route, group], index) => {
+      if (route === 'noRoute' || selectedMarker) return null;
+  
+      const origin = group[0].coordinate;
+      const destination = group[group.length - 1].coordinate;
+      const waypoints = group.slice(1, -1).map(marker => marker.coordinate);
+  
+      return (
+        <MapViewDirections
+          key={index}
+          origin={origin}
+          waypoints={waypoints}
+          destination={destination}
+          apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
+          mode="WALKING"
+          strokeWidth={3}
+          strokeColor="blue" 
+        />
+      );
+    });
+  };
+  
+
+  const groupMarkersByRoute = () => {
+    const groupedMarkers = {};
+    markers.forEach(marker => {
+      const route = marker.route || 'noRoute';
+      if (!groupedMarkers[route]) {
+        groupedMarkers[route] = [];
+      }
+      groupedMarkers[route].push(marker);
+    });
+    return groupedMarkers;
   };
 
   return (
     <View style={styles.container}>
+      <MapView 
+        style={styles.map} 
+        region={region}
+        onPress={handleMapPress} // Add onPress event handler for the map
+      >
+        {/* Render markers */}
+        {markers.map(marker => (
+          <Marker
+            key={marker.id}
+            coordinate={{
+              latitude: parseFloat(marker.coordinate.latitude),
+              longitude: parseFloat(marker.coordinate.longitude),
+            }}
+            title={marker.title}
+            pinColor={marker.color}
+          />
+        ))}
+
+        {/* Render directions for search location */}
+        {searchLocation && (
+          <MapViewDirections
+            origin={{
+              latitude: parseFloat(currentLocation.latitude),
+              longitude: parseFloat(currentLocation.longitude),
+            }}
+            destination={{
+              latitude: parseFloat(searchLocation.latitude),
+              longitude: parseFloat(searchLocation.longitude),
+            }}
+            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
+            mode="WALKING"
+            strokeWidth={3}
+            strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+          />
+        )}
+
+        {/* Render routes */}
+        {renderRoutes()}
+
+        {/* Always render the current location marker */}
+        {currentLocation && (
+          <Marker
+            coordinate={{
+              latitude: parseFloat(currentLocation.latitude),
+              longitude: parseFloat(currentLocation.longitude),
+            }}
+            title="Current Location"
+          />
+        )}
+        
+        {/* Render search location marker */}
+        {searchLocation && (
+          <Marker
+            coordinate={{
+              latitude: parseFloat(searchLocation.latitude),
+              longitude: parseFloat(searchLocation.longitude),
+            }}
+            title="Search Location"
+          />
+        )}
+      </MapView>
+
+      {/* Combined search input */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchBar}
-          placeholder="Search for a location"
+          placeholder="Search for a location or select a marker..."
           onChangeText={(text) => setSearchText(text)}
           value={searchText}
           onSubmitEditing={handleSearch}
+          onFocus={handleTextInputFocus}
         />
+        <TouchableOpacity style={styles.dropdownButton} onPress={() => setShowPicker(!showPicker)}>
+          <Text>▼</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.selectedMarkerContainer} onPress={() => setShowPicker(!showPicker)}>
-        <TextInput
-          style={styles.selectedMarkerText}
-          placeholder="Select a marker..."
-          value={selectedMarker ? selectedMarker.title : ''}
-          editable={false}
-        />
-      </TouchableOpacity>
-
+      {/* Marker picker */}
       {showPicker && (
         <FlatList
           style={styles.markerPicker}
@@ -125,54 +251,12 @@ const Map = () => {
         />
       )}
 
-      <MapView style={styles.map} region={region}>
-        <Marker
-          coordinate={{
-            latitude: parseFloat(region.latitude),
-            longitude: parseFloat(region.longitude),
-          }}
-          title="Current Location"
-        />
-        
-        {searchLocation && (
-          <Marker
-            coordinate={{
-              latitude: parseFloat(searchLocation.latitude),
-              longitude: parseFloat(searchLocation.longitude),
-            }}
-            title="Search Location"
-          />
-        )}
-
-        {searchLocation && (
-          <MapViewDirections
-            origin={{
-              latitude: parseFloat(region.latitude),
-              longitude: parseFloat(region.longitude),
-            }}
-            destination={{
-              latitude: parseFloat(searchLocation.latitude),
-              longitude: parseFloat(searchLocation.longitude),
-            }}
-            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
-            mode="WALKING"
-            strokeWidth={3}
-            strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`} 
-          />
-        )}
-
-        {markers.map(marker => (
-          <Marker
-            key={marker.id}
-            coordinate={{
-              latitude: parseFloat(marker.coordinate.latitude),
-              longitude: parseFloat(marker.coordinate.longitude),
-            }}
-            title={marker.title}
-            pinColor={marker.color}
-          />
-        ))}
-      </MapView>
+      {/* Clear search location button */}
+      {searchLocation && (
+        <TouchableOpacity style={styles.clearSearchButton} onPress={clearSearchLocation}>
+          <Text style={styles.clearSearchButtonText}>Clear Search Location</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -193,49 +277,52 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
     right: 20,
-    height: 40,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 1,
   },
   searchBar: {
+    flex: 1,
     height: 40,
     backgroundColor: '#fff',
     paddingHorizontal: 16,
-    width: '100%',
     borderColor: '#ccc',
     borderWidth: 1,
+    marginRight: 10,
   },
-  selectedMarkerContainer: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    right: 20,
-    height: 40,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    zIndex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedMarkerText: {
-    fontSize: 16,
+  dropdownButton: {
+    padding: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
   },
   markerPicker: {
     position: 'absolute',
-    top: 120,
+    top: 60,
     left: 20,
     right: 20,
-    height: 200,
+    maxHeight: 150,
     backgroundColor: '#fff',
     borderColor: '#ccc',
     borderWidth: 1,
     zIndex: 1,
   },
   markerPickerItem: {
-    fontSize: 16,
     padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    
+  },
+  clearSearchButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+  },
+  clearSearchButtonText: {
+    color: 'white',
   },
 });
 

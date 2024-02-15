@@ -29,10 +29,6 @@ run following commands
 --> npm install -g eas-cli
 --> npm install react-native-element-dropdown
 
-
-npm install @react-native-picker/picker
-
-
 30/1/2024
 -->npm install react-native-datepicker --save
 -->npm install @react-native-community/datetimepicker --save
@@ -43,6 +39,8 @@ npm install @react-native-picker/picker
 npm install react-native-mail --save
 npm install react-native-elements
 
+15/2/2024
+npm install @react-native-picker/picker
+
 after running the installation commands, in the same directory, run:
 --> npx expo start
-
