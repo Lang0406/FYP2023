@@ -37,7 +37,12 @@ const Markers = () => {
 
   const handleEditMarker = (marker) => {
     setSelectedMarker(marker);
-    setNewMarkerData(marker);
+    setNewMarkerData({
+      title: marker.title,
+      color: marker.color,
+      route: marker.route,
+      coordinate: { latitude: marker.coordinate.latitude, longitude: marker.coordinate.longitude }
+    });
     setModalVisible(true);
   };
 
@@ -59,7 +64,7 @@ const Markers = () => {
         await db.collection('markers').doc(selectedMarker.id).delete();
       }
       // Add new marker
-      await db.collection('markers').add(newMarkerData);
+      const newMarker = await db.collection('markers').add(newMarkerData);
       // Update markers state with new data
       const markersSnapshot = await db.collection('markers').get();
       const markersData = markersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -71,7 +76,7 @@ const Markers = () => {
     }
   };
 
-  const handleDeleteMarker = (markerId) => {
+  const handleDeleteMarker = async (markerId) => {
     Alert.alert(
       'Delete Marker',
       'Are you sure you want to delete this marker?',
@@ -133,7 +138,7 @@ const Markers = () => {
             </View>
           </View>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()} // Ensure the key is always a string
       />
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContent}>
