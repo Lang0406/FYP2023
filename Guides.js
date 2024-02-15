@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal, B
 import { db } from './firebase';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Guides = () => {
+const Guides = ( {role, email} ) => {
   const route = useRoute();
   const [guides, setGuides] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +14,9 @@ const Guides = () => {
   });
   const [selectedGuides, setSelectedGuides] = useState(null);
   const navigation = useNavigation();
+
+  console.log(role)
+  console.log(email)
 
   useEffect(() => {
     const fetchGuidesFromFirebase = async () => {

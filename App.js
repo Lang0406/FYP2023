@@ -117,7 +117,6 @@ const HomePage = ( {email, role} ) => {
           </Drawer.Screen>
           <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
           <Drawer.Screen name="Marker" component={Markers}></Drawer.Screen>
-          <Drawer.Screen name="Guides" component={Guides}></Drawer.Screen>
         </>
       ) : (
         role == 'accountmanager' ? (
@@ -133,6 +132,9 @@ const HomePage = ( {email, role} ) => {
           </>
         )
       )}
+      <Drawer.Screen name="Guides" >
+        {props => <Guides {...props} email={email} role={role} />}
+      </Drawer.Screen>
     </Drawer.Navigator>
   );
 }
