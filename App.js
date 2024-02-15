@@ -12,6 +12,7 @@ import Comment from './Comment';
 import Admin from './Admin';
 import AdminUserAccount from './AdminUserAccount';
 import Markers from './Markers';
+import Guides from './Guides';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -116,6 +117,7 @@ const HomePage = ( {email, role} ) => {
           </Drawer.Screen>
           <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
           <Drawer.Screen name="Marker" component={Markers}></Drawer.Screen>
+          <Drawer.Screen name="Guides" component={Guides}></Drawer.Screen>
         </>
       ) : (
         role == 'accountmanager' ? (

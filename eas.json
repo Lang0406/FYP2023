@@ -19,11 +19,6 @@
       "preview4": {
         "distribution": "internal"
       },
-      "preview5": {
-        "ios": {
-          "simulator": true
-        }
-      },
       "production": {}
    }
 
