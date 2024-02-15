@@ -4,13 +4,12 @@ import { Tooltip } from 'react-native-elements';
 import { db, firebase } from './firebase';
 
 const UserInfoScreen = ({ navigation, route }) => {
-  const [profilePicture, setProfilePicture] = useState(null); // Changed default to null
+  const [profilePicture, setProfilePicture] = useState(null);
   const [showProfileImages, setShowProfileImages] = useState(false);
-  const { email, age, location, role } = route.params.user;
+  const { email, age, location, role, profileImage } = route.params.user;
   const userEmail = route.params.userEmail;
   const isVerifiedInfluencer = role === 'influencer';
 
-  // Manually import the profile images
   const profileImages = [
     require('./assets/1.jpg'),
     require('./assets/2.jpg'),
@@ -35,7 +34,7 @@ const UserInfoScreen = ({ navigation, route }) => {
           if (userData.profilePicture) {
             setProfilePicture(userData.profilePicture);
           } else {
-            setProfilePicture(require('./assets/pf.jpg')); // Set default profile picture
+            setProfilePicture(require('./assets/pf.jpg'));
           }
         } else {
           console.log('User document does not exist');
@@ -80,7 +79,7 @@ const UserInfoScreen = ({ navigation, route }) => {
     if (imageURL) {
       setProfilePicture(imageURL);
       setShowProfileImages(false);
-      // Update profile picture URL in database
+      // Update user document in Firestore with the new profile picture URL
       db.collection('users').doc(userEmail).set({ profilePicture: imageURL }, { merge: true })
         .then(() => {
           console.log('Profile picture updated successfully');
@@ -120,7 +119,6 @@ const UserInfoScreen = ({ navigation, route }) => {
 
       <Button title="Select Profile Picture" onPress={() => setShowProfileImages(true)} />
 
-      {/* Add back the "Verify as Influencer" button */}
       <View style={styles.verifyContainer}>
         <Button title="Verify as Influencer" onPress={sendVerificationEmail} />
       </View>

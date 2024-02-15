@@ -35,7 +35,7 @@ export default function App() {
         setRole(userData.role)
         navigation.navigate('HomePage', {
           screen: 'UserInfo',
-          params: { user: userData, userEmail: email },
+          params: { user: userData, userEmail: email  },
          }); 
       } else {
         console.log('User data not found in Firestore');

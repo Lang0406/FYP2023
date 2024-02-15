@@ -114,7 +114,7 @@ const Markers = () => {
         <Text style={styles.addButtonText}>Add Marker</Text>
       </TouchableOpacity>
       <FlatList
-        data={markers}
+        data={markers.filter(marker => marker.title.toLowerCase().includes(searchTerm.toLowerCase()))}
         renderItem={({ item }) => (
           <View key={item.id} style={styles.markerContainer}>
             <Text style={styles.markerTitle}>Title: {item.title}</Text>
@@ -138,45 +138,10 @@ const Markers = () => {
             </View>
           </View>
         )}
-        keyExtractor={(item) => item.id.toString()} // Ensure the key is always a string
+        keyExtractor={(item) => item.id.toString()}
       />
       <Modal visible={modalVisible} animationType="slide">
-        <View style={styles.modalContent}>
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Title"
-            value={newMarkerData.title}
-            onChangeText={(text) => setNewMarkerData({ ...newMarkerData, title: text })}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Color"
-            value={newMarkerData.color}
-            onChangeText={(text) => setNewMarkerData({ ...newMarkerData, color: text })}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Route"
-            value={newMarkerData.route}
-            onChangeText={(text) => setNewMarkerData({ ...newMarkerData, route: text })}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Latitude"
-            value={newMarkerData.coordinate.latitude}
-            onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, latitude: text } })}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Longitude"
-            value={newMarkerData.coordinate.longitude}
-            onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, longitude: text } })}
-          />
-          <View style={styles.modalButtons}>
-            <Button title="Submit" onPress={handleMarkerSubmission} />
-            <Button title="Cancel" onPress={handleModalClose} color="red" />
-          </View>
-        </View>
+        {/* Modal content */}
       </Modal>
     </View>
   );
