@@ -141,8 +141,43 @@ const Markers = () => {
         keyExtractor={(item) => item.id.toString()}
       />
       <Modal visible={modalVisible} animationType="slide">
-        {/* Modal content */}
-      </Modal>
+  <View style={styles.modalContent}>
+    <TextInput
+      style={styles.modalInput}
+      placeholder="Title"
+      value={newMarkerData.title}
+      onChangeText={(text) => setNewMarkerData({ ...newMarkerData, title: text })}
+    />
+    <TextInput
+      style={styles.modalInput}
+      placeholder="Color"
+      value={newMarkerData.color}
+      onChangeText={(text) => setNewMarkerData({ ...newMarkerData, color: text })}
+    />
+    <TextInput
+      style={styles.modalInput}
+      placeholder="Route"
+      value={newMarkerData.route}
+      onChangeText={(text) => setNewMarkerData({ ...newMarkerData, route: text })}
+    />
+    <TextInput
+  style={styles.modalInput}
+  placeholder="Latitude"
+  value={newMarkerData.coordinate.latitude.toString()} 
+  onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, latitude: text } })}
+/>
+<TextInput
+  style={styles.modalInput}
+  placeholder="Longitude"
+  value={newMarkerData.coordinate.longitude.toString()} 
+  onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, longitude: text } })}
+/>
+    <View style={styles.modalButtons}>
+      <Button title="Cancel" onPress={handleModalClose} />
+      <Button title="Submit" onPress={handleMarkerSubmission} />
+    </View>
+  </View>
+</Modal>
     </View>
   );
 };
