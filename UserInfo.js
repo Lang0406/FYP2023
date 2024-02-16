@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView,Dimensions , Linking, TouchableOpacity, Image  } from 'react-native';
 import { Tooltip } from 'react-native-elements';
 import { firebase } from './firebase';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const UserInfoScreen = ({ navigation, route }) => {
   const { email, age, location, role } = route.params.user;
@@ -63,7 +65,15 @@ const UserInfoScreen = ({ navigation, route }) => {
         <View style={styles.verifyContainer}>
           <Button title="Verify as Influencer" onPress={sendVerificationEmail} />
         </View>
+
       )}
+       <View style={styles.container}>
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="cover"
+        />
+      </View>     
     </ScrollView>
   );
 };
@@ -71,10 +81,18 @@ const UserInfoScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    justifyContent: 'center',
     padding: 16,
+    backgroundColor:'#ffffff',
   },
   infoContainer: {
     marginBottom: 20,
+  },
+  gifImage: {
+    flex:1,
+    alignItems: 'center',
+    width: undefined, // Set the width and height as needed
+    height: undefined,
   },
   label: {
     fontWeight: 'bold',
