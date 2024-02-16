@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text,Image, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, Alert, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { firebase, db } from './firebase'; 
+import { firebase, db } from './firebase';
 import UserInfo from './UserInfo';
 import Register from './Register';
 import Map from './map';
@@ -35,13 +35,13 @@ export default function App() {
 
         setRole(userData.role)
 
-        if(userData.disabled) {
+        if (userData.disabled) {
           throw new Error("Login error: Your account has been suspended!")
         }
         navigation.navigate('HomePage', {
           screen: 'UserInfo',
-          params: { user: userData, userEmail: email  },
-         }); 
+          params: { user: userData, userEmail: email },
+        });
       } else {
         console.log('User data not found in Firestore');
       }
@@ -57,16 +57,16 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword} 
-          handleLogin={() => handleLogin(props.navigation)}
-           />}
+          {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword}
+            handleLogin={() => handleLogin(props.navigation)}
+          />}
         </Stack.Screen>
-        <Stack.Screen name="Register" component={Register} /> 
-        <Stack.Screen name="HomePage" options={{headerShown: false}}>
-          {props => <HomePage email={email} role={role}/>}
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="HomePage" options={{ headerShown: false }}>
+          {props => <HomePage email={email} role={role} />}
         </Stack.Screen>
 
-      </Stack.Navigator>      
+      </Stack.Navigator>
     </NavigationContainer>
 
   );
@@ -78,42 +78,53 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('./assets/icon.png')} style={styles.logo} />
-      <Text style={styles.title}>TREKMATE</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        onChangeText={(text) => setEmail(text)}
-        value={email}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-        onChangeText={(text) => setPassword(text)}
-        value={password}
-      />
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleRegisterNavigation}>
-          <Text>Register</Text>
-        </TouchableOpacity>
-        <View style={styles.buttonGap} />
-        <TouchableOpacity style={styles.button} onPress={() => handleLogin(navigation)}>
-          <Text>Login</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity >
-        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={styles.content}>
+          <Image source={require('./assets/icon.png')} style={styles.logo} />
+          <Text style={styles.title}>
+            <Text style={styles.trek}>Trek</Text>
+            <Text style={styles.mate}>Mate</Text>
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry={true}
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleRegisterNavigation}>
+              <Text>Register</Text>
+            </TouchableOpacity>
+            <View style={styles.buttonGap} />
+            <TouchableOpacity style={styles.button} onPress={() => handleLogin(navigation)}>
+              <Text>Login</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity >
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
-const HomePage = ( {email, role} ) => {
+const HomePage = ({ email, role }) => {
   return (
     <Drawer.Navigator>
-      <Drawer.Screen name="UserInfo" component={UserInfo} options={{title: 'My Profile'}}></Drawer.Screen>
+      <Drawer.Screen name="UserInfo" component={UserInfo} options={{ title: 'My Profile' }}></Drawer.Screen>
       {role == 'admin' ? (
         <>
           <Drawer.Screen name="Forum">
@@ -149,24 +160,24 @@ const HomePage = ( {email, role} ) => {
   );
 }
 
-const Forum = ( {email, role} ) => {
+const Forum = ({ email, role }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Post" options={{headerShown: false}}>
+      <Stack.Screen name="Post" options={{ headerShown: false }}>
         {props => <Post email={email} role={role} />}
       </Stack.Screen>
-      <Stack.Screen name="Comment" component={Comment} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="Comment" component={Comment} options={{ headerShown: false }}></Stack.Screen>
     </Stack.Navigator>
   );
 }
 
-const SysAdmin = ( {role} ) => {
+const SysAdmin = ({ role }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="SysAdminMain" options={{headerShown: false}}>
+      <Stack.Screen name="SysAdminMain" options={{ headerShown: false }}>
         {props => <Admin role={role} />}
       </Stack.Screen>
-      <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{ headerShown: false }}></Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -178,23 +189,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
+    paddingTop:100,
+  },
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
     width: 200,
     height: 200,
     resizeMode: 'contain',
-    marginBottom: 16,
+    marginBottom: 25,
   },
   title: {
     fontSize: 24,
-    marginBottom: 16,
+    marginBottom: 25,
   },
   input: {
     height: 40,
     width: '80%',
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 16,
+    marginBottom: 25,
     paddingLeft: 8,
   },
   buttonContainer: {
@@ -204,15 +220,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#E6E6FA',
     padding: 10,
   },
+  trek: {
+    color: '#89CFF0', // Change the color for "Trek" to your desired color
+  },
+  mate: {
+    color: '#FFB6C1', // Change the color for "Mate" to your desired color
+  },
   buttonGap: {
-    width: 15,
+    width: 25,
   },
   forgotPasswordText: {
     marginTop: 10,
     color: 'blue',
     textDecorationLine: 'underline',
+    marginTop:20
   },
 });

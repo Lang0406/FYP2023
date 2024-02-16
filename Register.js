@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { View, Text,Image, TextInput, Button, Alert, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebase, db } from './firebase';
 
@@ -31,7 +31,9 @@ const Register = ({ navigation }) => {
   };
 
   const handleRegister = async () => {
-    if (!emailValid || !passwordValid || !genderValid || !locationValid) {
+    const hasValidationErrors = !validateFields();
+  
+    if (hasValidationErrors) {
       Alert.alert('Validation Error', 'Please fill in all fields correctly.');
       return;
     }
@@ -94,11 +96,19 @@ const Register = ({ navigation }) => {
   };
 
   const validateFields = () => {
-    setEmailValid(validateEmail(email));
-    setPasswordValid(validatePassword(password));
-    setGenderValid(validateGenderAndLocation(gender));
-    setLocationValid(validateGenderAndLocation(location));
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    const isGenderValid = validateGenderAndLocation(gender);
+    const isLocationValid = validateGenderAndLocation(location);
+  
+    setEmailValid(isEmailValid);
+    setPasswordValid(isPasswordValid);
+    setGenderValid(isGenderValid);
+    setLocationValid(isLocationValid);
+  
+    return isEmailValid && isPasswordValid && isGenderValid && isLocationValid;
   };
+  
 
   const styles = StyleSheet.create({
     container: {
@@ -106,6 +116,7 @@ const Register = ({ navigation }) => {
       backgroundColor: '#fff',
       justifyContent: 'center',
       padding: 16,
+      paddingTop:-100,
     },
     scrollView: {
       flexGrow: 1,
@@ -162,6 +173,13 @@ const Register = ({ navigation }) => {
       borderRadius: 8,
       alignSelf: 'center',
     },
+    icon: {
+      width: 200, // Set the width as needed
+      height: 200, // Set the height as needed
+      resizeMode: 'contain', // Adjust the resizeMode based on your image
+      alignSelf: 'center', // Center the icon horizontally
+      marginBottom: 16,
+    },
     registerButtonText: {
       color: 'white',
       fontSize: 16,
@@ -176,6 +194,7 @@ const Register = ({ navigation }) => {
     >
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View>
+          <Image source={require('./assets/icon.png')} style={styles.icon} />
           <Text style={styles.title}>Register</Text>
           <TextInput
             style={[styles.input, emailValid === false && styles.invalidInput]}
