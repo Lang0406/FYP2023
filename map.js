@@ -5,6 +5,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import { db } from './firebase'; 
 import { useFocusEffect } from '@react-navigation/native'; 
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Map = () => {
   const [region, setRegion] = useState({
@@ -19,7 +20,8 @@ const Map = () => {
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null); 
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchMarkersFromFirebase = async () => {
     try {
@@ -38,36 +40,35 @@ const Map = () => {
         console.error('Permission to access location denied');
         return;
       }
-
+  
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
       });
-
-      console.log('Location:', location);
-
+  
       const { latitude, longitude } = location.coords;
-      setRegion({
+      setCurrentLocation({ latitude, longitude }); 
+      setRegion({ 
         latitude,
         longitude,
         latitudeDelta: 0.02,
         longitudeDelta: 0.02,
       });
-      setCurrentLocation({ latitude, longitude }); // Set current location 
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   useFocusEffect(
     useCallback(() => {
       getLocationAsync();
       fetchMarkersFromFirebase();
-    }, []) 
+    }, [])
   );
 
   const handleSearch = async () => {
     try {
-      const apiKey = 'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'; 
+      const apiKey = 'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM';
       const encodedSearchText = encodeURIComponent(searchText);
       const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodedSearchText}&key=${apiKey}`);
       const data = await response.json();
@@ -98,7 +99,7 @@ const Map = () => {
         longitude: parseFloat(marker.coordinate.longitude),
       });
       setShowPicker(false);
-      setSearchLocation(null); //
+      setSearchLocation(null);
 
       setTimeout(() => {
         handleMapPress(); 
@@ -148,7 +149,6 @@ const Map = () => {
     });
   };
   
-
   const groupMarkersByRoute = () => {
     const groupedMarkers = {};
     markers.forEach(marker => {
@@ -161,14 +161,32 @@ const Map = () => {
     return groupedMarkers;
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    fetchMarkersFromFirebase();
+    setRefreshing(false);
+  };
+  
   return (
     <View style={styles.container}>
       <MapView 
         style={styles.map} 
-        region={region}
+        initialRegion={currentLocation ? {
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        } : undefined}
+        region={searchLocation ? {
+          latitude: searchLocation.latitude,
+          longitude: searchLocation.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        } : region}
         onPress={handleMapPress} 
+        onError={(error) => console.error('Map error:', error)}
       >
-       
+
         {markers.map(marker => (
           <Marker
             key={marker.id}
@@ -181,16 +199,15 @@ const Map = () => {
           />
         ))}
 
-       
-        {searchLocation && (
+        {searchLocation && currentLocation && (
           <MapViewDirections
             origin={{
-              latitude: parseFloat(currentLocation.latitude),
-              longitude: parseFloat(currentLocation.longitude),
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude,
             }}
             destination={{
-              latitude: parseFloat(searchLocation.latitude),
-              longitude: parseFloat(searchLocation.longitude),
+              latitude: searchLocation.latitude,
+              longitude: searchLocation.longitude,
             }}
             apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'} 
             mode="WALKING"
@@ -199,10 +216,8 @@ const Map = () => {
           />
         )}
 
-       
         {renderRoutes()}
 
-      
         {currentLocation && (
           <Marker
             coordinate={{
@@ -213,7 +228,6 @@ const Map = () => {
           />
         )}
         
-       
         {searchLocation && (
           <Marker
             coordinate={{
@@ -225,7 +239,6 @@ const Map = () => {
         )}
       </MapView>
 
-     
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchBar}
@@ -240,7 +253,6 @@ const Map = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Marker picker */}
       {showPicker && (
         <FlatList
           style={styles.markerPicker}
@@ -254,12 +266,13 @@ const Map = () => {
         />
       )}
 
-      {/* Clear search location button */}
       {searchLocation && (
         <TouchableOpacity style={styles.clearSearchButton} onPress={clearSearchLocation}>
           <Text style={styles.clearSearchButtonText}>Clear Search Location</Text>
         </TouchableOpacity>
       )}
+
+  
     </View>
   );
 };
@@ -325,6 +338,15 @@ const styles = StyleSheet.create({
   },
   clearSearchButtonText: {
     color: 'white',
+  },
+  refreshButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 50,
+    elevation: 5,
   },
 });
 
