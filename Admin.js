@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } from 'react-native';
 import { db } from './firebase';
 import { useNavigation } from '@react-navigation/native';
 
 const Admin = ({ route, navigation }) => {
-    //console.log(route)
-    //console.log(navigation)
+    const [searchInput, setSearchInput] = useState('');
     const [userAccounts, setUserAccounts] = useState([]);
-    //const navigation = useNavigation();
 
     //Fetch users when page loads
     useEffect(() => {
         const fetchUsers = async () => {
+          console.log("Fetching users")
           try {
             const querySnapshot = await db.collection('users').get();
             const usersData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -22,9 +21,9 @@ const Admin = ({ route, navigation }) => {
         };
     
         fetchUsers();
-      });
+      }, []);
 
-      //Handle create user
+      //Handle create usera
       const handleUserCreate = () => {
         const item = {
           id: null
@@ -44,6 +43,7 @@ const Admin = ({ route, navigation }) => {
       
       //Render each user
       const renderUserItem = ({ item }) => (
+        item.email.toUpperCase().includes(searchInput.toUpperCase()) ? (
         <View style={styles.container}>
           <View>
             <Text style={styles.text}>Email: {item.email}</Text>
@@ -61,6 +61,9 @@ const Admin = ({ route, navigation }) => {
             </View>
           </View>
         </View>
+        ) : (
+          <></>
+        )
       );  
 
     return (
@@ -68,6 +71,14 @@ const Admin = ({ route, navigation }) => {
           <TouchableOpacity style={styles.topButton} onPress={() => handleUserCreate()}>
             <Text>Create New User</Text>
           </TouchableOpacity>
+          <View style={styles.searchContainer}>
+            <TextInput
+                  style={styles.input}
+                  placeholder="Search for user email..."
+                  onChangeText={(text) => setSearchInput(text)}
+                  value={searchInput}
+              />
+          </View>
           <FlatList
               data={userAccounts}
               renderItem={renderUserItem}
@@ -113,6 +124,18 @@ const styles = StyleSheet.create({
     },
     pageContainer:{
       marginBottom: 70,
+    },
+    input: {
+      height: 40,
+      width: '80%',
+      borderWidth: 1,
+      marginVertical: 16,
+      margin: 10,
+      padding: 8,
+      borderRadius: 5,
+    },
+    searchContainer: {
+      alignItems: 'center',
     },
 });
 

@@ -15,9 +15,6 @@ const Guides = ( {role, email} ) => {
   const [selectedGuides, setSelectedGuides] = useState(null);
   const navigation = useNavigation();
 
-  console.log(role)
-  console.log(email)
-
   useEffect(() => {
     const fetchGuidesFromFirebase = async () => {
       try {
