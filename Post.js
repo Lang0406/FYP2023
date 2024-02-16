@@ -121,12 +121,15 @@ const Post = ({ email, role }) => {
         <Text style={styles.userEmail}>
           User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
         </Text>
-        {(item.userEmail === email || role === 'admin') && ( 
-          <Button title="Delete" onPress={() => handleDeletePost(item.id)} />
-        )}
+        <View style={styles.deleteButtonContainer}>
+          {(item.userEmail === email || role === 'admin') && ( 
+            <Button style={styles.deleteButton} title="Delete" onPress={() => handleDeletePost(item.id)} />
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
+
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
@@ -202,7 +205,9 @@ const Post = ({ email, role }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
+    justifyContent: 'space-between',
   },
   searchBar: {
     height: 40,
@@ -232,12 +237,18 @@ const styles = StyleSheet.create({
   userEmail: {
     marginTop: 5,
   },
+  deleteButtonContainer: {
+    marginLeft: 'auto', // Push the delete button to the right
+    marginTop:-10,
+  },
+  deleteButton: {
+    color: 'red',
+  },
   newPostButton: {
     backgroundColor: '#3498db',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
   },
   newPostButtonText: {
     color: '#fff',
@@ -280,7 +291,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginBottom: 10,
   },
   paginationButton: {
     backgroundColor: '#3498db',
