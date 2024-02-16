@@ -34,7 +34,7 @@ export default function App() {
         console.log('User data from Firestore:', userData);
 
         setRole(userData.role)
-        console.log(userData.disabled)
+
         if(userData.disabled) {
           throw new Error("Login error: Your account has been suspended!")
         }
@@ -124,11 +124,14 @@ const HomePage = ( {email, role} ) => {
           <Drawer.Screen name="Guides" >
             {props => <Guides {...props} email={email} role={role} />}
           </Drawer.Screen>
+          <Drawer.Screen name="Admin">
+            {props => <SysAdmin role={role} />}
+          </Drawer.Screen>
         </>
       ) : (
         role == 'accountmanager' ? (
           <Drawer.Screen name="Admin">
-            {props => <SysAdmin email={email} />}
+            {props => <SysAdmin role={role} />}
           </Drawer.Screen>
         ) : (
           <>
@@ -157,10 +160,12 @@ const Forum = ( {email, role} ) => {
   );
 }
 
-const SysAdmin = ( {email} ) => {
+const SysAdmin = ( {role} ) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="SysAdminMain" component={Admin} options={{headerShown: false}}></Stack.Screen>
+      <Stack.Screen name="SysAdminMain" options={{headerShown: false}}>
+        {props => <Admin role={role} />}
+      </Stack.Screen>
       <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );

@@ -30,12 +30,21 @@ const AdminUserAccount = ({route}) => {
         setDisabled(item.disabled ? item.disabled : false)
     }, [item]);
 
-    const data = [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
-        { label: 'Influencer', value: 'influencer' },
-        { label: 'Account Manager', value: 'accountmanager' },
-      ];
+    const data = 
+      (route.params.role == "accountmanager" ? (
+        route.params.item.id ? 
+      ([
+          { label: 'Admin', value: 'admin' },
+          { label: 'User', value: 'user' },
+        ]) : (
+          [{ label: 'Admin', value: 'admin' },]
+        )
+      ) : (
+        [
+          { label: 'User', value: 'user' },
+          { label: 'Influencer', value: 'influencer' },
+        ]
+      ))
 
     const handleUserAccount = async () => {
         //Handle create

@@ -3,15 +3,21 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } 
 import { db } from './firebase';
 import { useNavigation } from '@react-navigation/native';
 
-const Admin = ({ route, navigation }) => {
+const Admin = ({ role }) => {
     const [searchInput, setSearchInput] = useState('');
     const [userAccounts, setUserAccounts] = useState([]);
+    const [roleFilter, setRoleFilter] = useState('')
     const [refresh, setRefresh] = useState(false);
+
+    const navigation = useNavigation();
+    
+    useEffect(() => {
+      setRoleFilter(role == "accountmanager" ? "admin" : "user,influencer")
+    }, [roleFilter])
 
     //Fetch users when page loads
     useEffect(() => {
         const fetchUsers = async () => {
-          console.log("Fetching users")
           try {
             const querySnapshot = await db.collection('users').get();
             const usersData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -29,12 +35,12 @@ const Admin = ({ route, navigation }) => {
         const item = {
           id: null
         };
-        navigation.navigate('AdminUserAccount', {item})
+        navigation.navigate('AdminUserAccount', {item, role})
       }
 
       //Handle edit user
       const handleUserEdit = item => {
-        navigation.navigate('AdminUserAccount', {item})
+        navigation.navigate('AdminUserAccount', {item, role})
       }
 
       //Handle suspend user (in progress)
@@ -52,7 +58,7 @@ const Admin = ({ route, navigation }) => {
       
       //Render each user
       const renderUserItem = ({ item }) => (
-        item.email.toUpperCase().includes(searchInput.toUpperCase()) ? (
+        item.email.toUpperCase().includes(searchInput.toUpperCase()) && (roleFilter.includes(item.role)) ? (
         <View style={styles.container}>
           <View>
             <Text style={styles.text}>Email: {item.email}</Text>
