@@ -123,8 +123,10 @@ const Post = ({ email, role }) => {
         </Text>
         <View style={styles.deleteButtonContainer}>
           {(item.userEmail === email || role === 'admin') && ( 
-            <Button style={styles.deleteButton} title="Delete" onPress={() => handleDeletePost(item.id)} />
-          )}
+            <TouchableOpacity onPress={() => handleDeletePost(item.id)}>
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
+        )}
         </View>
       </View>
     </TouchableOpacity>
@@ -242,10 +244,10 @@ const styles = StyleSheet.create({
     marginTop:-10,
   },
   deleteButton: {
-    color: 'red',
+    color: '#FAC898',
   },
   newPostButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#FAC898',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   modalButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#FAC898',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   paginationButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#FAC898',
     padding: 10,
     borderRadius: 8,
   },
