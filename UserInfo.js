@@ -71,7 +71,7 @@ const UserInfoScreen = ({ navigation, route }) => {
         <Image
           source={require('./assets/walk.gif')}
           style={styles.gifImage}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       </View>     
     </ScrollView>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor:'#ffffff',
+    backgroundColor:'#fcfafc',
   },
   infoContainer: {
     marginBottom: 20,
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
   gifImage: {
     flex:1,
     alignItems: 'center',
-    width: undefined, // Set the width and height as needed
-    height: undefined,
+    width:'50',
+    height:'50',
   },
   label: {
     fontWeight: 'bold',
