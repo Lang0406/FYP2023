@@ -45,7 +45,6 @@ const Register = ({ navigation }) => {
         return;
       }
   
-    
       await db.collection('users').doc(user.uid).set({
         email,
         age,
@@ -53,7 +52,6 @@ const Register = ({ navigation }) => {
         location,
         role,
         disabled,
-        profilePicture: null 
       });
   
       Alert.alert('Registration Successful', 'Welcome to the app!');
@@ -64,6 +62,7 @@ const Register = ({ navigation }) => {
       Alert.alert('Registration Error', error.message);
     }
   };
+  
   
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || new Date();

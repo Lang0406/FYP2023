@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import { db } from './firebase'; 
+import { useFocusEffect } from '@react-navigation/native'; 
 
 const Map = () => {
   const [region, setRegion] = useState({
@@ -18,49 +19,51 @@ const Map = () => {
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null); // Track current location separately
+  const [currentLocation, setCurrentLocation] = useState(null); 
 
-  useEffect(() => {
-    const getLocationAsync = async () => {
-      try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          console.error('Permission to access location denied');
-          return;
-        }
+  const fetchMarkersFromFirebase = async () => {
+    try {
+      const markersSnapshot = await db.collection('markers').get();
+      const markersData = markersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMarkers(markersData);
+    } catch (error) {
+      console.error('Error fetching markers:', error);
+    }
+  };
 
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        });
-
-        console.log('Location:', location);
-
-        const { latitude, longitude } = location.coords;
-        setRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        });
-        setCurrentLocation({ latitude, longitude }); // Set current location separately
-      } catch (error) {
-        console.error(error);
+  const getLocationAsync = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Permission to access location denied');
+        return;
       }
-    };
 
-    const fetchMarkersFromFirebase = async () => {
-      try {
-        const markersSnapshot = await db.collection('markers').get();
-        const markersData = markersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setMarkers(markersData);
-      } catch (error) {
-        console.error('Error fetching markers:', error);
-      }
-    };
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
 
-    getLocationAsync();
-    fetchMarkersFromFirebase();
-  }, []);
+      console.log('Location:', location);
+
+      const { latitude, longitude } = location.coords;
+      setRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      });
+      setCurrentLocation({ latitude, longitude }); // Set current location 
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getLocationAsync();
+      fetchMarkersFromFirebase();
+    }, []) 
+  );
 
   const handleSearch = async () => {
     try {
@@ -96,8 +99,7 @@ const Map = () => {
       });
       setShowPicker(false);
       setSearchLocation(null); //
-  
-    
+
       setTimeout(() => {
         handleMapPress(); 
         setTimeout(handleMapPress, 1000);
@@ -106,17 +108,17 @@ const Map = () => {
   };
 
   const handleTextInputFocus = () => {
-    setSelectedMarker(null); // Clear selected marker when the text input is focused
-    setShowPicker(true); // Show marker picker when the text input is focused
+    setSelectedMarker(null); 
+    setShowPicker(true); 
   };
 
   const clearSearchLocation = () => {
-    setSearchLocation(null); // Clear search location when triggered
+    setSearchLocation(null); 
   };
 
   const handleMapPress = () => {
-    setShowPicker(true); // Show marker picker when the map is pressed
-    setSelectedMarker(null); // Clear selected marker
+    setShowPicker(true); 
+    setSelectedMarker(null); 
   };
 
   const renderRoutes = () => {
@@ -126,7 +128,8 @@ const Map = () => {
     return routes.map(([route, group], index) => {
       if (route === 'noRoute' || selectedMarker) return null;
   
-      const origin = group[0].coordinate;
+      const origin = `${group[0].coordinate.latitude},${group[0].coordinate.longitude}`;
+
       const destination = group[group.length - 1].coordinate;
       const waypoints = group.slice(1, -1).map(marker => marker.coordinate);
   
@@ -136,7 +139,7 @@ const Map = () => {
           origin={origin}
           waypoints={waypoints}
           destination={destination}
-          apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
+          apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'} 
           mode="WALKING"
           strokeWidth={3}
           strokeColor="blue" 
@@ -163,9 +166,9 @@ const Map = () => {
       <MapView 
         style={styles.map} 
         region={region}
-        onPress={handleMapPress} // Add onPress event handler for the map
+        onPress={handleMapPress} 
       >
-        {/* Render markers */}
+       
         {markers.map(marker => (
           <Marker
             key={marker.id}
@@ -178,7 +181,7 @@ const Map = () => {
           />
         ))}
 
-        {/* Render directions for search location */}
+       
         {searchLocation && (
           <MapViewDirections
             origin={{
@@ -189,17 +192,17 @@ const Map = () => {
               latitude: parseFloat(searchLocation.latitude),
               longitude: parseFloat(searchLocation.longitude),
             }}
-            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'}
+            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'} 
             mode="WALKING"
             strokeWidth={3}
             strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
           />
         )}
 
-        {/* Render routes */}
+       
         {renderRoutes()}
 
-        {/* Always render the current location marker */}
+      
         {currentLocation && (
           <Marker
             coordinate={{
@@ -210,7 +213,7 @@ const Map = () => {
           />
         )}
         
-        {/* Render search location marker */}
+       
         {searchLocation && (
           <Marker
             coordinate={{
@@ -222,7 +225,7 @@ const Map = () => {
         )}
       </MapView>
 
-      {/* Combined search input */}
+     
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchBar}
@@ -311,7 +314,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    
   },
   clearSearchButton: {
     position: 'absolute',

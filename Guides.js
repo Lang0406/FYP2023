@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal, B
 import { db } from './firebase';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Guides = ( {role, email} ) => {
+const Guides = ({ role, email }) => {
   const route = useRoute();
   const [guides, setGuides] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,16 +54,16 @@ const Guides = ( {role, email} ) => {
   const handleGuidesSubmission = async () => {
     try {
       if (selectedGuides) {
-        // Delete existing guide
+       
         await db.collection('guides').doc(selectedGuides.id).delete();
       }
-      // Add new guide
+     
       const newGuides = await db.collection('guides').add(newGuidesData);
-      // Update guides state with new data
+     
       const guidesSnapshot = await db.collection('guides').get();
       const guidesData = guidesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setGuides(guidesData);
-      // Close modal and reset form data
+     
       handleModalClose();
     } catch (error) {
       console.error('Error adding/editing guide:', error);
@@ -84,7 +84,7 @@ const Guides = ( {role, email} ) => {
           onPress: async () => {
             try {
               await db.collection('guides').doc(guidesId).delete();
-              // Update guides state after deletion
+              
               const updatedGuides = guides.filter(guides => guides.id !== guidesId);
               setGuides(updatedGuides);
             } catch (error) {
@@ -104,9 +104,11 @@ const Guides = ( {role, email} ) => {
         onChangeText={(text) => setSearchTerm(text)}
         value={searchTerm}
       />
-      <TouchableOpacity style={styles.addButton} onPress={handleAddGuides}>
-        <Text style={styles.addButtonText}>Add Guides</Text>
-      </TouchableOpacity>
+      {role === 'admin' && (
+        <TouchableOpacity style={styles.addButton} onPress={handleAddGuides}>
+          <Text style={styles.addButtonText}>Add Guides</Text>
+        </TouchableOpacity>
+      )}
       <FlatList
         data={guides.filter(marker => marker.title.toLowerCase().includes(searchTerm.toLowerCase()))}
         renderItem={({ item }) => (
@@ -114,18 +116,22 @@ const Guides = ( {role, email} ) => {
             <Text style={styles.guidesTitle}>Title: {item.title}</Text>
             <Text style={styles.guidesDescription}>Description: {item.desc}</Text>
             <View style={styles.guidesButtonsContainer}>
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => handleEditGuides(item)}
-              >
-                <Text style={styles.buttonText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleDeleteGuides(item.id)}
-              >
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
+              {role === 'admin' && (
+                <>
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => handleEditGuides(item)}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => handleDeleteGuides(item.id)}
+                  >
+                    <Text style={styles.buttonText}>Delete</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </View>
         )}
@@ -140,8 +146,8 @@ const Guides = ( {role, email} ) => {
             onChangeText={(text) => setNewGuidesData({ ...newGuidesData, title: text })}
           />
           <TextInput
-            style={[styles.modalInput, {height: 150, textAlignVertical: 'top'}]}
-            multiline= {true}
+            style={[styles.modalInput, { height: 150, textAlignVertical: 'top' }]}
+            multiline={true}
             placeholder="Description"
             value={newGuidesData.desc}
             onChangeText={(text) => setNewGuidesData({ ...newGuidesData, desc: text })}

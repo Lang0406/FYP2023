@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { db } from './firebase';
+import { useNavigation } from '@react-navigation/native';
 
 const Comment = ({ route }) => {
+  const navigation = useNavigation();
   const { post } = route.params;
   const [comments, setComments] = useState([]);
   const [commentDescription, setCommentDescription] = useState('');
@@ -110,6 +112,7 @@ const Comment = ({ route }) => {
         onChangeText={(text) => setCommentDescription(text)}
       />
       <Button title="Post Comment" onPress={handlePostComment} />
+      <Button title="Back to Forum" onPress={() => navigation.goBack()} />
 
       {comments.length > 0 ? (
         <View>
@@ -131,6 +134,8 @@ const Comment = ({ route }) => {
       ) : (
         <Text>No comments yet. Be the first to comment!</Text>
       )}
+
+      
     </View>
   );
 };
