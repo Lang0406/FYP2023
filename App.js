@@ -34,6 +34,10 @@ export default function App() {
         console.log('User data from Firestore:', userData);
 
         setRole(userData.role)
+        console.log(userData.disabled)
+        if(userData.disabled) {
+          throw new Error("Login error: Your account has been suspended!")
+        }
         navigation.navigate('HomePage', {
           screen: 'UserInfo',
           params: { user: userData, userEmail: email  },

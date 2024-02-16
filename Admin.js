@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 const Admin = ({ route, navigation }) => {
     const [searchInput, setSearchInput] = useState('');
     const [userAccounts, setUserAccounts] = useState([]);
+    const [refresh, setRefresh] = useState(false);
 
     //Fetch users when page loads
     useEffect(() => {
@@ -21,7 +22,7 @@ const Admin = ({ route, navigation }) => {
         };
     
         fetchUsers();
-      }, []);
+      }, [refresh]);
 
       //Handle create usera
       const handleUserCreate = () => {
@@ -37,8 +38,16 @@ const Admin = ({ route, navigation }) => {
       }
 
       //Handle suspend user (in progress)
-      const handleUserSuspend = item => {
-        console.log('Suspend', item)
+      const handleUserSuspend = async (item) => {
+        disabled = !item.disabled
+        try {
+          await db.collection('users').doc(item.id).update({
+            disabled,
+          });
+          setRefresh(!refresh)
+        } catch (error) {
+          console.log(error)
+        }
       }
       
       //Render each user
@@ -51,12 +60,13 @@ const Admin = ({ route, navigation }) => {
             <Text style={styles.text}>Age: {item.age}</Text>
             <Text style={styles.text}>Location: {item.location}</Text>
             <Text style={styles.text}>Role: {item.role}</Text>
+            {item.disabled ? (<Text style={styles.textDisabled}>Account disabled</Text>) : (<></>)}
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.buttonEdit} onPress={() => handleUserEdit(item)}>
                 <Text>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.buttonSuspend} onPress={() => handleUserSuspend(item)}>
-                <Text>Suspend</Text>
+                <Text> { item.disabled ? "Unsuspend" : "Suspend" } </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -121,6 +131,10 @@ const styles = StyleSheet.create({
     },
     text: {
       padding: 10,
+    },
+    textDisabled: {
+      padding: 10,
+      fontStyle: 'italic',
     },
     pageContainer:{
       marginBottom: 70,

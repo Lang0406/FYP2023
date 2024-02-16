@@ -10,6 +10,7 @@ const Register = ({ navigation }) => {
   const [gender, setGender] = useState('');
   const [location, setLocation] = useState('');
   const [role, setRole] = useState('user');
+  const [disabled, setDisabled] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [emailValid, setEmailValid] = useState(null);
   const [passwordValid, setPasswordValid] = useState(null);
@@ -51,6 +52,7 @@ const Register = ({ navigation }) => {
         gender,
         location,
         role,
+        disabled,
         profilePicture: null 
       });
   

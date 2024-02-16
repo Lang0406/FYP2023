@@ -13,6 +13,7 @@ const AdminUserAccount = ({route}) => {
     const [location, setLocation] = useState('');
     const [role, setRole] = useState('');
     const [id, setID] = useState('');
+    const [disabled, setDisabled] = useState(false);
 
     const navigation = useNavigation();
 
@@ -26,6 +27,7 @@ const AdminUserAccount = ({route}) => {
         setLocation(item.location)
         setID(item.id)
         setRole(item.role ? item.role : "")
+        setDisabled(item.disabled ? item.disabled : false)
     }, [item]);
 
     const data = [
@@ -54,6 +56,7 @@ const AdminUserAccount = ({route}) => {
                     gender,
                     location,
                     role,
+                    disabled,
                 });
     
                 Alert.alert('Account successfully created!')
@@ -131,6 +134,7 @@ const AdminUserAccount = ({route}) => {
                 onChangeText={(text) => setLocation(text)}
                 value={location}
             />
+            {item.disabled ? (<Text style={styles.textDisabled}>Account disabled</Text>) : (<></>)}
             <Dropdown
               style={styles.dropdown}
               placeholderStyle={styles.placeholderStyle}
@@ -225,6 +229,10 @@ const styles = StyleSheet.create({
       inputSearchStyle: {
         height: 40,
         fontSize: 16,
+      },
+      textDisabled: {
+        padding: 10,
+        fontStyle: 'italic',
       },
   });
 
