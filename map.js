@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'; // Import PROVIDER_GOOGLE
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import { db } from './firebase'; 
@@ -68,7 +68,7 @@ const Map = () => {
 
   const handleSearch = async () => {
     try {
-      const apiKey = 'AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0';
+      const apiKey = 'AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0'; 
       const encodedSearchText = encodeURIComponent(searchText);
       const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodedSearchText}&key=${apiKey}`);
       const data = await response.json();
@@ -184,6 +184,7 @@ const Map = () => {
           latitudeDelta: 0.02,
           longitudeDelta: 0.02,
         } : region}
+        provider={PROVIDER_GOOGLE} // Add provider property
         onPress={handleMapPress} 
         onError={(error) => console.error('Map error:', error)}
       >
