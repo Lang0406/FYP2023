@@ -131,7 +131,8 @@ const Map = () => {
   
       const origin = `${group[0].coordinate.latitude},${group[0].coordinate.longitude}`;
 
-      const destination = group[group.length - 1].coordinate;
+      const destinationCoordinate = group[group.length - 1].coordinate;
+      const destination = `${destinationCoordinate.latitude},${destinationCoordinate.longitude}`;
       const waypoints = group.slice(1, -1).map(marker => marker.coordinate);
   
       return (
