@@ -37,16 +37,18 @@ const Post = ({ email, role }) => {
 
   useEffect(() => {
     setUserEmail(email);
-  }, [email]);
-
-  useEffect(() => {
-    setUserEmail(userEmail);
     console.log('User Email on Post Page:', email);
   }, [email]);
 
   useEffect(() => {
     console.log('User Role on Post Page:', role);
   }, [role]);
+
+  const getRandomColor = () => {
+    const colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4'];
+    const randomIndex = Math.floor(Math.random() * colorPool.length);
+    return colorPool[randomIndex];
+  };
 
   const handlePostClick = (post) => {
     navigation.navigate('Comment', { post, email, role });
@@ -108,29 +110,33 @@ const Post = ({ email, role }) => {
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-  const renderPostItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.postContainer}
-      onPress={() => handlePostClick(item)}
-    >
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.descriptionText}>{item.description}</Text>
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text>Date: {item.time}</Text>
-        <Text style={styles.userEmail}>
-          User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
-        </Text>
-        <View style={styles.deleteButtonContainer}>
-          {(item.userEmail === email || role === 'admin') && ( 
-            <TouchableOpacity onPress={() => handleDeletePost(item.id)}>
-            <Text style={styles.deleteButtonText}>Delete</Text>
-          </TouchableOpacity>
-        )}
+  const renderPostItem = ({ item }) => {
+    const postColor = getRandomColor();
+
+    return (
+      <TouchableOpacity
+        style={[styles.postContainer, { borderColor: postColor }]}
+        onPress={() => handlePostClick(item)}
+      >
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionText}>{item.description}</Text>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+        <View style={styles.detailsContainer}>
+          <Text>Date: {item.time}</Text>
+          <Text style={styles.userEmail}>
+            User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
+          </Text>
+          <View style={styles.deleteButtonContainer}>
+            {(item.userEmail === email || role === 'admin') && ( 
+              <TouchableOpacity onPress={() => handleDeletePost(item.id)}>
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
@@ -219,9 +225,9 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   postContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+    borderWidth: 5,
+    borderColor: '#baffc9',
+    borderRadius: 18,
     padding: 16,
     marginBottom: 16,
   },
@@ -235,6 +241,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    
   },
   userEmail: {
     marginTop: 5,
@@ -244,10 +251,10 @@ const styles = StyleSheet.create({
     marginTop:-10,
   },
   deleteButton: {
-    color: '#FAC898',
+    color: '#0000FF',
   },
   newPostButton: {
-    backgroundColor: '#FAC898',
+    backgroundColor: '#0000FF',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -280,7 +287,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   modalButton: {
-    backgroundColor: '#FAC898',
+    backgroundColor: '#0000FF',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -296,7 +303,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   paginationButton: {
-    backgroundColor: '#FAC898',
+    backgroundColor: '#0000FF',
     padding: 10,
     borderRadius: 8,
   },
