@@ -68,7 +68,7 @@ const Map = () => {
 
   const handleSearch = async () => {
     try {
-      const apiKey = 'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM';
+      const apiKey = 'AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0';
       const encodedSearchText = encodeURIComponent(searchText);
       const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodedSearchText}&key=${apiKey}`);
       const data = await response.json();
@@ -141,7 +141,7 @@ const Map = () => {
           origin={origin}
           waypoints={waypoints}
           destination={destination}
-          apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'} 
+          apikey={'AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0'} 
           mode="WALKING"
           strokeWidth={3}
           strokeColor="blue" 
@@ -210,7 +210,7 @@ const Map = () => {
               latitude: searchLocation.latitude,
               longitude: searchLocation.longitude,
             }}
-            apikey={'AIzaSyD8UXKKGV2mUpaPJ-rOvkPiNFxAVlUn6OM'} 
+            apikey={'AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0'} 
             mode="WALKING"
             strokeWidth={3}
             strokeColor={`#${Math.floor(Math.random() * 16777215).toString(16)}`}

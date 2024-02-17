@@ -4,7 +4,7 @@
     "slug": "YourProjectName",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png", 
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "AIzaSyAF8EntZ5zEUN2iZCKWgTpVniq6nRk-Ws4"
+        "googleMapsApiKey": "AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0"
       },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location for some feature",
@@ -32,7 +32,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAF8EntZ5zEUN2iZCKWgTpVniq6nRk-Ws4"
+          "apiKey": "AIzaSyBzJe8YO2NV5o9Yx8E0iWz_Nl9GbZCuCM0"
         }
       },
       "permissions": [
