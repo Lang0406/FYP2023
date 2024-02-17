@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { firebase, db } from './firebase';
 import UserInfo from './UserInfo';
 import Register from './Register';
@@ -17,7 +17,32 @@ import Guides from './Guides';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-export default function App() {
+const CustomDrawerContent = (props) => {
+  const handleLogout = () => {
+    firebase.auth().signOut().then(() => {
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }).catch((error) => {
+      console.error('Error logging out:', error.message);
+    });
+  };
+
+  return (
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text>Log Out</Text>
+        </TouchableOpacity>
+      </View>
+    </DrawerContentScrollView>
+  );
+};
+
+
+const App = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
@@ -33,7 +58,7 @@ export default function App() {
         const userData = querySnapshot.docs[0].data();
         console.log('User data from Firestore:', userData);
 
-        setRole(userData.role)
+        setRole(userData.role);
 
         if (userData.disabled) {
           throw new Error("Login error: Your account has been suspended!")
@@ -51,26 +76,31 @@ export default function App() {
       console.error('Error logging in:', error.message);
       Alert.alert('Login Error', error.message);
     }
-  }
+  };
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} email={email} setEmail={setEmail} password={password} setPassword={setPassword}
-            handleLogin={() => handleLogin(props.navigation)}
-          />}
+          {props => (
+            <LoginScreen
+              {...props}
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              handleLogin={() => handleLogin(props.navigation)}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="HomePage" options={{ headerShown: false }}>
           {props => <HomePage email={email} role={role} />}
         </Stack.Screen>
-
       </Stack.Navigator>
     </NavigationContainer>
-
   );
-}
+};
 
 const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handleLogin }) => {
   const handleRegisterNavigation = () => {
@@ -112,7 +142,7 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
               <Text>Login</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity >
+          <TouchableOpacity>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
@@ -123,16 +153,16 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
 
 const HomePage = ({ email, role }) => {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="UserInfo" component={UserInfo} options={{ title: 'My Profile' }}></Drawer.Screen>
-      {role == 'admin' ? (
+    <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+      <Drawer.Screen name="UserInfo" component={UserInfo} options={{ title: 'My Profile' }} />
+      {role === 'admin' ? (
         <>
           <Drawer.Screen name="Forum">
             {props => <Forum {...props} email={email} role={role} />}
           </Drawer.Screen>
-          <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
-          <Drawer.Screen name="Marker" component={Markers}></Drawer.Screen>
-          <Drawer.Screen name="Guides" >
+          <Drawer.Screen name="Map" component={Map} />
+          <Drawer.Screen name="Marker" component={Markers} />
+          <Drawer.Screen name="Guides">
             {props => <Guides {...props} email={email} role={role} />}
           </Drawer.Screen>
           <Drawer.Screen name="Admin">
@@ -140,7 +170,7 @@ const HomePage = ({ email, role }) => {
           </Drawer.Screen>
         </>
       ) : (
-        role == 'accountmanager' ? (
+        role === 'accountmanager' ? (
           <Drawer.Screen name="Admin">
             {props => <SysAdmin role={role} />}
           </Drawer.Screen>
@@ -149,8 +179,8 @@ const HomePage = ({ email, role }) => {
             <Drawer.Screen name="Forum">
               {props => <Forum {...props} email={email} role={role} />}
             </Drawer.Screen>
-            <Drawer.Screen name="Map" component={Map}></Drawer.Screen>
-            <Drawer.Screen name="Guides" >
+            <Drawer.Screen name="Map" component={Map} />
+            <Drawer.Screen name="Guides">
               {props => <Guides {...props} email={email} role={role} />}
             </Drawer.Screen>
           </>
@@ -158,29 +188,29 @@ const HomePage = ({ email, role }) => {
       )}
     </Drawer.Navigator>
   );
-}
+};
 
 const Forum = ({ email, role }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Post" options={{ headerShown: false }}>
-        {props => <Post email={email} role={role} />}
+        {props => <Post {...props} email={email} role={role} />}
       </Stack.Screen>
-      <Stack.Screen name="Comment" component={Comment} options={{ headerShown: false }}></Stack.Screen>
+      <Stack.Screen name="Comment" component={Comment} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
-}
+};
 
 const SysAdmin = ({ role }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="SysAdminMain" options={{ headerShown: false }}>
-        {props => <Admin role={role} />}
+        {props => <Admin {...props} role={role} />}
       </Stack.Screen>
-      <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{ headerShown: false }}></Stack.Screen>
+      <Stack.Screen name="AdminUserAccount" component={AdminUserAccount} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -189,12 +219,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    paddingTop:100,
+    paddingTop: 100,
   },
   content: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
   logo: {
     width: 200,
     height: 200,
@@ -224,10 +255,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   trek: {
-    color: '#89CFF0', // Change the color for "Trek" to your desired color
+    color: '#89CFF0',
   },
   mate: {
-    color: '#FFB6C1', // Change the color for "Mate" to your desired color
+    color: '#FFB6C1',
   },
   buttonGap: {
     width: 25,
@@ -236,6 +267,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'blue',
     textDecorationLine: 'underline',
-    marginTop:20
+    marginTop: 20,
+  },
+  logoutButton: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   },
 });
+
+export default App;

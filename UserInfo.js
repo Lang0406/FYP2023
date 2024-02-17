@@ -70,7 +70,7 @@ const UserInfoScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       )}
 
-      <View style={styles.infoContainer}>
+      <View style={styles.infoBox}>
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.emailText}>
           {email} {isVerifiedInfluencer && '✓'}
@@ -79,6 +79,9 @@ const UserInfoScreen = ({ navigation, route }) => {
         <Text style={styles.ageText}>{age}</Text>
         <Text style={styles.label}>Location:</Text>
         <Text style={styles.locationText}>{location}</Text>
+      </View>
+
+      <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={navigateToPost}>
           <Text>Go to Posts</Text>
         </TouchableOpacity>
@@ -137,14 +140,25 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 10,
   },
+  infoBox: {
+    backgroundColor: '#e6e6e6',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
   button: {
+    flex: 1,
     backgroundColor: '#89CFF0',
     padding: 10,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    marginBottom: 10,
+    marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 30,
   },
   verifyButton: {
     position: 'absolute',
