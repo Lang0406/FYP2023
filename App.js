@@ -142,9 +142,6 @@ const LoginScreen = ({ navigation, email, setEmail, password, setPassword, handl
               <Text>Login</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

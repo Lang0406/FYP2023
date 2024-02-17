@@ -67,11 +67,11 @@ const Admin = ({ role }) => {
             <></>
           )}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonEdit} onPress={() => handleUserEdit(item)}>
-              <Text>Edit</Text>
+            <TouchableOpacity style={styles.editButton} onPress={() => handleUserEdit(item)}>
+              <Text style={styles.buttonText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonSuspend} onPress={() => handleUserSuspend(item)}>
-              <Text> {item.disabled ? 'Unsuspend' : 'Suspend'} </Text>
+            <TouchableOpacity style={styles.susButton} onPress={() => handleUserSuspend(item)}>
+              <Text style={styles.buttonText}> {item.disabled ? 'Unsuspend' : 'Suspend'} </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -83,9 +83,6 @@ const Admin = ({ role }) => {
 
   return (
     <View style={styles.pageContainer}>
-      <TouchableOpacity style={styles.topButton} onPress={handleUserCreate}>
-        <Text>Create New User</Text>
-      </TouchableOpacity>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
@@ -94,6 +91,9 @@ const Admin = ({ role }) => {
           value={searchInput}
         />
       </View>
+      <TouchableOpacity style={styles.createButton} onPress={handleUserCreate}>
+        <Text style={styles.createButtonText}>Create New User</Text>
+      </TouchableOpacity>
       <FlatList
         data={userAccounts}
         renderItem={renderUserItem}
@@ -104,28 +104,21 @@ const Admin = ({ role }) => {
 };
 
 const styles = StyleSheet.create({
-  topButton: {
-    width: '50%',
-    padding: 16,
-    borderWidth: 1,
+  createButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 8,
     alignItems: 'center',
-    backgroundColor: '#add8e6', // Light Blue
+    marginBottom: 16,
   },
-  buttonEdit: {
+  button: {
     borderWidth: 0.5,
     padding: 16,
     alignItems: 'center',
     width: '50%',
-    borderColor: 'darkslateblue',
-    backgroundColor: '#98fb98', // Pale Green
-  },
-  buttonSuspend: {
-    borderWidth: 0.5,
-    padding: 16,
-    alignItems: 'center',
-    width: '50%',
-    borderColor: 'red',
-    backgroundColor: '#ffb6c1', // Light Pink
+    backgroundColor: '#3498db', // Dodger Blue
+    borderRadius: 10,
+    marginBottom: 10,
   },
   container: {
     padding: 16,
@@ -135,21 +128,36 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f8ff', // Alice Blue
   },
   buttonContainer: {
-    flex: 2,
     flexDirection: 'row',
   },
   text: {
     padding: 10,
-    color: 'darkslateblue',
+    color: '#696969', // Dim Gray
   },
   textDisabled: {
     padding: 10,
     fontStyle: 'italic',
     color: 'red',
   },
+  susButton: {
+    backgroundColor: '#e74c3c',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '45%',
+  },
+  editButton: {
+    backgroundColor: '#2ecc71',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '45%',
+    marginHorizontal:10,
+  },
   pageContainer: {
     marginBottom: 70,
     backgroundColor: '#f0f8ff', // Alice Blue
+    paddingHorizontal: 10,
   },
   input: {
     height: 40,
@@ -162,6 +170,14 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  createButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

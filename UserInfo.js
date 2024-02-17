@@ -85,9 +85,6 @@ const UserInfoScreen = ({ navigation, route }) => {
         <TouchableOpacity style={styles.button} onPress={navigateToPost}>
           <Text>Go to Posts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleLogout}>
-          <Text>Log Out</Text>
-        </TouchableOpacity>
       </View>
       
       <View style={styles.horizontalGifContainer}>

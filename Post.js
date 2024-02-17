@@ -173,7 +173,7 @@ const Post = ({ email, role }) => {
           onPress={handleNextPage}
           disabled={indexOfLastPost >= filteredPosts.length}
         >
-          <Text style={styles.paginationButtonText}>Next Page</Text>
+          <Text style={styles.paginationButtonText}>    Next Page    </Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.newPostButton} onPress={handleNewPost}>
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     color: '#0000FF',
   },
   newPostButton: {
-    backgroundColor: '#0000FF',
+    backgroundColor: '#3498db',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   modalButton: {
-    backgroundColor: '#0000FF',
+    backgroundColor: '#3498db',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   paginationButton: {
-    backgroundColor: '#0000FF',
+    backgroundColor: '#3498db',
     padding: 10,
     borderRadius: 8,
   },
