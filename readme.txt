@@ -2,7 +2,7 @@ Accept github invitation
 Make changes; commit to main/cloned repo
 Push changes to repo
 
-
+(Global)
 open command line
 check that nodejs and Node Package Manager has been installed; 
 --> run node -v
@@ -12,6 +12,7 @@ run the following:
 npm install -g expo-cli
 npm install firebase
 
+(Project Folder)
 navigate to the project directory 
 run following commands
 
@@ -44,3 +45,6 @@ npm install @react-native-picker/picker
 
 after running the installation commands, in the same directory, run:
 --> npx expo start
+
+To ensure that the application can work within ExpoGo, the device has to be in the same network as
+the computer that is ran the command above.
