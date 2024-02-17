@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, ScrollView,Dimensions , Linking, TouchableOpacity, Image  } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, Dimensions, Linking, TouchableOpacity, Image } from 'react-native';
 import { Tooltip } from 'react-native-elements';
 import { firebase } from './firebase';
 
@@ -40,6 +40,23 @@ const UserInfoScreen = ({ navigation, route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.horizontalGifContainer}>
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="center"
+        />
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="center"
+        />
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="center"
+        />
+      </View>
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.emailText}>
@@ -48,11 +65,13 @@ const UserInfoScreen = ({ navigation, route }) => {
         <Text style={styles.label}>Age:</Text>
         <Text>{age}</Text>
         <Text style={styles.label}>Location:</Text>
-        <Text>{location}</Text>
+        <Text style={styles.locationText}>{location}</Text>
         <TouchableOpacity style={styles.button} onPress={navigateToPost}>
           <Text>Go to Posts</Text>
         </TouchableOpacity>
-        <Button title="Logout" onPress={handleLogout} />
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+          <Text>Log Out</Text>
+        </TouchableOpacity>
       </View>
 
       {isVerifiedInfluencer && (
@@ -62,18 +81,28 @@ const UserInfoScreen = ({ navigation, route }) => {
       )}
 
       {!isVerifiedInfluencer && (
-        <View style={styles.verifyContainer}>
-          <Button title="Verify as Influencer" onPress={sendVerificationEmail} />
-        </View>
-
+        <TouchableOpacity style={styles.button} onPress={sendVerificationEmail}>
+          <Text>Verify as Influencer</Text>
+        </TouchableOpacity>
       )}
-       <View style={styles.container}>
+
+      <View style={styles.horizontalGifContainer}>
         <Image
           source={require('./assets/walk.gif')}
           style={styles.gifImage}
-          resizeMode="contain"
+          resizeMode="center"
         />
-      </View>     
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="center"
+        />
+        <Image
+          source={require('./assets/walk.gif')}
+          style={styles.gifImage}
+          resizeMode="center"
+        />
+      </View>
     </ScrollView>
   );
 };
@@ -83,32 +112,37 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor:'#fcfafc',
-  },
-  infoContainer: {
-    marginBottom: 20,
+    backgroundColor: '#fcfafc',
   },
   gifImage: {
-    flex:1,
+    flex: 1,
     alignItems: 'center',
-    width:'50',
-    height:'50',
+    width: '50%',
+    height: '50%',
+    margin: 5,
   },
   label: {
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   emailText: {
     fontSize: 16,
     color: 'black',
-    marginBottom: 10,
+  },
+  locationText: {
+    marginBottom: 50,
   },
   button: {
     backgroundColor: '#89CFF0',
     padding: 10,
-    marginVertical: 10,
+    marginVertical: 5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  horizontalGifContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height:150
   },
   verifyContainer: {
     marginTop: 10,
