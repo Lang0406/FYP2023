@@ -75,7 +75,7 @@ const UserInfoScreen = ({ navigation, route }) => {
           {email} {isVerifiedInfluencer && '✓'}
         </Text>
         <Text style={styles.label}>Age:</Text>
-        <Text>{age}</Text>
+        <Text style={styles.ageText}>{age}</Text>
         <Text style={styles.label}>Location:</Text>
         <Text style={styles.locationText}>{location}</Text>
         <TouchableOpacity style={styles.button} onPress={navigateToPost}>
@@ -125,18 +125,22 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   emailText: {
-    fontSize: 16,
+    fontSize: 24,
     color: 'black',
   },
+  ageText:{
+    fontSize:24,
+  },
   locationText: {
-    marginBottom: 50,
+    fontSize: 24,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#89CFF0',
     padding: 10,
     paddingHorizontal:10,
     marginVertical: 10,
-    marginBottom:20,
+    marginBottom:10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -145,10 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height:150,
     marginTop:50,
-  },
-  verifyContainer: {
-    marginBottom: 10,
-
   },
 });
 
