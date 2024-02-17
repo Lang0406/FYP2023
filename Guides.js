@@ -54,16 +54,15 @@ const Guides = ({ role, email }) => {
   const handleGuidesSubmission = async () => {
     try {
       if (selectedGuides) {
-       
         await db.collection('guides').doc(selectedGuides.id).delete();
       }
-     
+
       const newGuides = await db.collection('guides').add(newGuidesData);
-     
+
       const guidesSnapshot = await db.collection('guides').get();
       const guidesData = guidesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setGuides(guidesData);
-     
+
       handleModalClose();
     } catch (error) {
       console.error('Error adding/editing guide:', error);
@@ -84,7 +83,7 @@ const Guides = ({ role, email }) => {
           onPress: async () => {
             try {
               await db.collection('guides').doc(guidesId).delete();
-              
+
               const updatedGuides = guides.filter(guides => guides.id !== guidesId);
               setGuides(updatedGuides);
             } catch (error) {
@@ -152,9 +151,19 @@ const Guides = ({ role, email }) => {
             value={newGuidesData.desc}
             onChangeText={(text) => setNewGuidesData({ ...newGuidesData, desc: text })}
           />
-          <View style={styles.modalButtons}>
-            <Button title="Submit" onPress={handleGuidesSubmission} />
-            <Button title="Cancel" onPress={handleModalClose} color="red" />
+          <View style={styles.modalButtonsContainer}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={handleModalClose}
+            >
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleGuidesSubmission}
+            >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -173,6 +182,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+    borderRadius:8,
   },
   addButton: {
     backgroundColor: '#3498db',
@@ -236,11 +246,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+    borderRadius: 8,
   },
-  modalButtons: {
+  modalButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  cancelButton: {
+    backgroundColor: '#e74c3c',
+    borderRadius: 8,
+    padding: 16,
+    marginRight: 8,
+    marginBottom: 16,
+  },
+  submitButton: {
+    backgroundColor: '#3498db',
+    borderRadius: 8,
+    padding: 16,
+    marginLeft: 8,
+    marginBottom: 16,
   },
 });
 

@@ -140,48 +140,63 @@ const Markers = () => {
         )}
         keyExtractor={(item) => item.id.toString()}
       />
-      <Modal visible={modalVisible} animationType="slide">
+<Modal visible={modalVisible} animationType="slide">
   <View style={styles.modalContent}>
     <TextInput
       style={styles.modalInput}
       placeholder="Title"
+      placeholderTextColor="#A9A9A9"  // Grey placeholder color
       value={newMarkerData.title}
       onChangeText={(text) => setNewMarkerData({ ...newMarkerData, title: text })}
     />
     <TextInput
       style={styles.modalInput}
       placeholder="Color"
+      placeholderTextColor="#A9A9A9"  // Grey placeholder color
       value={newMarkerData.color}
       onChangeText={(text) => setNewMarkerData({ ...newMarkerData, color: text })}
     />
     <TextInput
       style={styles.modalInput}
       placeholder="Route"
+      placeholderTextColor="#A9A9A9"  // Grey placeholder color
       value={newMarkerData.route}
       onChangeText={(text) => setNewMarkerData({ ...newMarkerData, route: text })}
     />
     <TextInput
-  style={styles.modalInput}
-  placeholder="Latitude"
-  value={newMarkerData.coordinate.latitude.toString()} 
-  onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, latitude: text } })}
-/>
-<TextInput
-  style={styles.modalInput}
-  placeholder="Longitude"
-  value={newMarkerData.coordinate.longitude.toString()} 
-  onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, longitude: text } })}
-/>
-    <View style={styles.modalButtons}>
-      <Button title="Cancel" onPress={handleModalClose} />
-      <Button title="Submit" onPress={handleMarkerSubmission} />
+      style={styles.modalInput}
+      placeholder="Latitude"
+      placeholderTextColor="#A9A9A9"  // Grey placeholder color
+      value={newMarkerData.coordinate.latitude.toString()} 
+      onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, latitude: text } })}
+    />
+    <TextInput
+      style={styles.modalInput}
+      placeholder="Longitude"
+      placeholderTextColor="#A9A9A9"  // Grey placeholder color
+      value={newMarkerData.coordinate.longitude.toString()} 
+      onChangeText={(text) => setNewMarkerData({ ...newMarkerData, coordinate: { ...newMarkerData.coordinate, longitude: text } })}
+    />
+    <View style={styles.modalButtonsContainer}>
+      <TouchableOpacity
+        style={styles.cancelButton}
+        onPress={handleModalClose}
+      >
+        <Text style={styles.buttonText}>Cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={handleMarkerSubmission}
+      >
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   </View>
 </Modal>
+
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -248,6 +263,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    borderRadius: 20,  // Rounded corners
+    backgroundColor: '#fff',  // White background color
   },
   modalInput: {
     height: 40,
@@ -256,12 +273,35 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingLeft: 8,
+    borderRadius: 8,  // Rounded corners
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
+    borderColor:'#3498db',
+    width:'100%',
   },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  cancelButton: {
+    backgroundColor: '#e74c3c',
+    borderRadius: 8,
+    padding: 16,
+    marginRight: 8,
+    marginBottom: 16,
+  },
+  submitButton: {
+    backgroundColor: '#3498db',
+    borderRadius: 8,
+    padding: 16,
+    marginLeft: 8,
+    marginBottom: 16,
+  },
+  
+  
 });
 
 export default Markers;

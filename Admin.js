@@ -105,37 +105,11 @@ const Admin = ({ role }) => {
 
 const styles = StyleSheet.create({
   createButton: {
-    width: '80%', // Adjust the width as needed
     backgroundColor: '#3498db',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,
-    alignSelf: 'center',
-  },
-  susButton: {
-    backgroundColor: '#e74c3c',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: '45%',
-  },
-  editButton: {
-    backgroundColor: '#2ecc71',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: '45%',
-    marginHorizontal: 10,
-  },
-  input: {
-    height: 40,
-    width: '80%', // Adjust the width as needed
-    borderWidth: 1,
-    marginVertical: 16,
-    margin: 10,
-    padding: 8,
-    borderRadius: 5,
   },
   button: {
     borderWidth: 0.5,
@@ -165,10 +139,35 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: 'red',
   },
+  susButton: {
+    backgroundColor: '#e74c3c',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '45%',
+  },
+  editButton: {
+    backgroundColor: '#2ecc71',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '45%',
+    marginHorizontal:10,
+  },
   pageContainer: {
     marginBottom: 70,
     backgroundColor: '#f0f8ff', // Alice Blue
     paddingHorizontal: 10,
+  },
+  input: {
+    height: 40,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginVertical: 16,
+    margin: 10,
+    padding: 8,
+    borderRadius: 5,
   },
   searchContainer: {
     alignItems: 'center',
