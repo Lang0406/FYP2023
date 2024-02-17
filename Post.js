@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList, Button } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Modal, FlatList } from 'react-native';
 import { db } from './firebase';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -14,6 +14,9 @@ const Post = ({ email, role }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5; // Number of posts to display per page
   const navigation = useNavigation();
+
+  // Array of colors to be used for posts
+  const colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4'];
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -44,12 +47,6 @@ const Post = ({ email, role }) => {
     console.log('User Role on Post Page:', role);
   }, [role]);
 
-  const getRandomColor = () => {
-    const colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4'];
-    const randomIndex = Math.floor(Math.random() * colorPool.length);
-    return colorPool[randomIndex];
-  };
-
   const handlePostClick = (post) => {
     navigation.navigate('Comment', { post, email, role });
   };
@@ -69,14 +66,14 @@ const Post = ({ email, role }) => {
       const randomNumber = Math.floor(Math.random() * 10000);
       const postId = `${timestamp}-${randomNumber}`;
 
-      const isInfluencer = role === 'influencer'; 
+      const isInfluencer = role === 'influencer';
 
       const newPost = {
         description: newPostDescription,
         time: new Date().toLocaleString(),
         userEmail: email,
         postId: postId,
-        isInfluencer: isInfluencer, 
+        isInfluencer: isInfluencer,
       };
 
       await db.collection('posts').doc(postId).set(newPost);
@@ -110,8 +107,9 @@ const Post = ({ email, role }) => {
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-  const renderPostItem = ({ item }) => {
-    const postColor = getRandomColor();
+  const renderPostItem = ({ item, index }) => {
+    // Get color based on the index of the post
+    const postColor = colorPool[index % colorPool.length];
 
     return (
       <TouchableOpacity
@@ -127,7 +125,7 @@ const Post = ({ email, role }) => {
             User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}
           </Text>
           <View style={styles.deleteButtonContainer}>
-            {(item.userEmail === email || role === 'admin') && ( 
+            {(item.userEmail === email || role === 'admin') && (
               <TouchableOpacity onPress={() => handleDeletePost(item.id)}>
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </TouchableOpacity>
@@ -173,7 +171,7 @@ const Post = ({ email, role }) => {
           onPress={handleNextPage}
           disabled={indexOfLastPost >= filteredPosts.length}
         >
-          <Text style={styles.paginationButtonText}>    Next Page    </Text>
+          <Text style={styles.paginationButtonText}>    Next Page   </Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.newPostButton} onPress={handleNewPost}>

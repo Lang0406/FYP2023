@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   infoBox: {
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#C1E1C1',
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 8,
     marginTop: 30,
   },
   verifyButton: {
