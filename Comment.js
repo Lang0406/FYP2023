@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { db } from './firebase';
 import { useNavigation } from '@react-navigation/native';
 
@@ -10,6 +10,8 @@ const Comment = ({ route }) => {
   const [commentDescription, setCommentDescription] = useState('');
   const [email, setUserEmail] = useState(route.params?.email || '');
   const [role, setUserRole] = useState(route.params?.role || '');
+
+  const colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4','#BF00FF','#FFDB58','#40E0D0'];
 
   const fetchComments = async () => {
     try {
@@ -80,7 +82,6 @@ const Comment = ({ route }) => {
 
       const commentData = commentDoc.data();
 
-  
       if (commentData.userEmail === email || role === 'admin') {
         await commentRef.delete();
         fetchComments();
@@ -90,6 +91,31 @@ const Comment = ({ route }) => {
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
+  };
+
+  const renderCommentItem = ({ item, index }) => {
+    const commentColor = colorPool[index % colorPool.length];
+
+    return (
+      <TouchableOpacity
+        style={[styles.commentContainer, { borderColor: commentColor }]}
+      >
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionText}>{item.description}</Text>
+        </View>
+        <View style={styles.detailsContainer}>
+          <Text>Date: {item.time}</Text>
+          <Text>User Email: {item.userEmail} {item.isInfluencer ? '✓' : ''}</Text>
+          {(item.userEmail === email || role === 'admin') && (
+            <View style={styles.deleteButtonContainer}>
+              <TouchableOpacity onPress={() => handleDeleteComment(item.id)}>
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -111,47 +137,45 @@ const Comment = ({ route }) => {
         value={commentDescription}
         onChangeText={(text) => setCommentDescription(text)}
       />
-      <Button title="Post Comment" onPress={handlePostComment} />
-      <Button title="Back to Forum" onPress={() => navigation.goBack()} />
+      
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+            <Text style={styles.backButtonText}>Back to forum</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.postButton}
+          onPress={handlePostComment}>
+            <Text style={styles.backButtonText}>Post Comment</Text>
+        </TouchableOpacity>
+      </View>
 
       {comments.length > 0 ? (
-        <View>
-          {comments.map((comment, index) => (
-            <View key={index} style={styles.commentContainer}>
-              <View style={styles.descriptionContainer}>
-                <Text style={styles.descriptionText}>{comment.description}</Text>
-              </View>
-              <View style={styles.detailsContainer}>
-                <Text>Date: {comment.time}</Text>
-                <Text>User Email: {comment.userEmail} {comment.isInfluencer ? '✓' : ''}</Text>
-                {(comment.userEmail === email || role === 'admin') && (
-                  <Button title="Delete" onPress={() => handleDeleteComment(comment.id)} />
-                )}
-              </View>
-            </View>
-          ))}
-        </View>
+        <FlatList
+          data={comments}
+          renderItem={renderCommentItem}
+          keyExtractor={(item) => item.id}
+        />
       ) : (
         <Text>No comments yet. Be the first to comment!</Text>
       )}
-
-      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   postContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+    borderWidth: 5,
+    borderColor: '#baffc9',
+    borderRadius: 18,
     padding: 16,
     marginBottom: 16,
   },
   commentContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+    borderWidth: 5,
+    borderRadius: 18,
     padding: 16,
     marginBottom: 16,
   },
@@ -167,11 +191,46 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start', 
   },
   input: {
-    height: 40,
+    height: 80,
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 16,
+    borderRadius:8,
+
     padding: 8,
+    marginHorizontal:40,
+  },
+  deleteButtonText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  deleteButtonContainer: {
+    marginLeft: 'auto', // Push the delete button to the right
+    marginTop: -10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    color:'#3498db'
+  },
+  backButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    marginLeft:40,
+  },
+  postButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 5,
+    marginRight:40,
+  },
+  backButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

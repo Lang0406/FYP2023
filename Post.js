@@ -16,7 +16,10 @@ const Post = ({ email, role }) => {
   const navigation = useNavigation();
 
   // Array of colors to be used for posts
-  const colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4'];
+  let colorPool = ['#FFD700', '#87CEEB', '#98FB98', '#FFA07A', '#FF6347', '#FF69B4', '#BF00FF', '#FFDB58', '#40E0D0'];
+
+  // Shuffle the colorPool array to randomize colors
+  colorPool = colorPool.sort(() => Math.random() - 0.5);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -224,7 +227,6 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     borderWidth: 5,
-    borderColor: '#baffc9',
     borderRadius: 18,
     padding: 16,
     marginBottom: 16,
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
   },
   deleteButtonContainer: {
     marginLeft: 'auto', // Push the delete button to the right
-    marginTop:-10,
+    marginTop: -10,
   },
   deleteButton: {
     color: '#0000FF',
