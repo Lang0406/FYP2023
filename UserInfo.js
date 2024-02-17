@@ -57,6 +57,18 @@ const UserInfoScreen = ({ navigation, route }) => {
           resizeMode="center"
         />
       </View>
+      {isVerifiedInfluencer && (
+        <View style={styles.verifyContainer}>
+          <Button title="Verified Influencer" disabled />
+        </View>
+      )}
+
+      {!isVerifiedInfluencer && (
+        <TouchableOpacity style={styles.button} onPress={sendVerificationEmail}>
+          <Text>Verify as Influencer</Text>
+        </TouchableOpacity>
+      )}
+
       <View style={styles.infoContainer}>
         <Text style={styles.label}>Email:</Text>
         <Text style={styles.emailText}>
@@ -73,19 +85,6 @@ const UserInfoScreen = ({ navigation, route }) => {
           <Text>Log Out</Text>
         </TouchableOpacity>
       </View>
-
-      {isVerifiedInfluencer && (
-        <View style={styles.verifyContainer}>
-          <Button title="Verified Influencer" disabled />
-        </View>
-      )}
-
-      {!isVerifiedInfluencer && (
-        <TouchableOpacity style={styles.button} onPress={sendVerificationEmail}>
-          <Text>Verify as Influencer</Text>
-        </TouchableOpacity>
-      )}
-
       <View style={styles.horizontalGifContainer}>
         <Image
           source={require('./assets/walk.gif')}
@@ -135,17 +134,21 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#89CFF0',
     padding: 10,
-    marginVertical: 5,
+    paddingHorizontal:10,
+    marginVertical: 10,
+    marginBottom:20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   horizontalGifContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height:150
+    height:150,
+    marginTop:50,
   },
   verifyContainer: {
-    marginTop: 10,
+    marginBottom: 10,
+
   },
 });
 
